@@ -8,34 +8,69 @@ public class ScoringService {
 
     public void applyIntermediateScoring(GameState state) {
 
+        // 📄 Rule: scoring only from round 3 onward
+        if (state.getCurrentRound() < 3) {
+            return;
+        }
+
         ScoreTrack score = state.getScoreTrack();
+        Plantation p = state.getPlantation();
 
-        // Empty crates
-        for (Crate crate : state.getPlantation().getCrates()) {
-            boolean empty = state.getPlantation().getApples().stream()
-                    .noneMatch(a -> a.getLocation() == AppleLocation.IN_CRATE
-                                && a.getContainerId().equals(crate.getId()));
+        int penalty = 0;
 
-            if (empty) score.setEconomy(score.getEconomy() - 1);
-        }
-
-        // Empty sales stands
-        for (SalesStand stand : state.getPlantation().getSalesStands()) {
-            boolean empty = state.getPlantation().getApples().stream()
-                    .noneMatch(a -> a.getLocation() == AppleLocation.IN_SALES_STAND
-                                && a.getContainerId().equals(stand.getId()));
-
-            if (empty) score.setEconomy(score.getEconomy() - 1);
-        }
-
-        // Wasted apples
-        long wasted = state.getPlantation().getApples().stream()
+        // 1️⃣ Wasted apples
+        long wasted = p.getApples().stream()
                 .filter(a -> a.getLocation() == AppleLocation.WASTED)
                 .count();
 
-        score.setEconomy(score.getEconomy() - (int)(wasted / 3));
+        penalty += (int) (wasted / 3);
 
-        // Game over check
+        // 🔥 remove wasted apples so they are not counted again
+        p.getApples().removeIf(a -> a.getLocation() == AppleLocation.WASTED);
+
+        // 2️⃣ Empty crates
+        for (Crate crate : p.getCrates()) {
+            boolean empty = p.getApples().stream()
+                    .noneMatch(a ->
+                            a.getLocation() == AppleLocation.IN_CRATE &&
+                                    crate.getId().equals(a.getContainerId())
+                    );
+
+            if (empty) penalty++;
+        }
+
+        // 3️⃣ Empty sales stands
+        for (SalesStand stand : p.getSalesStands()) {
+            boolean empty = p.getApples().stream()
+                    .noneMatch(a ->
+                            a.getLocation() == AppleLocation.IN_SALES_STAND &&
+                                    stand.getId().equals(a.getContainerId())
+                    );
+
+            if (empty) penalty++;
+        }
+
+        // 4️⃣ PERFECT BALANCE BONUS (+1)
+        boolean allCratesFull = p.getCrates().stream().allMatch(crate ->
+                p.getApples().stream()
+                        .filter(a -> a.getLocation() == AppleLocation.IN_CRATE
+                                && crate.getId().equals(a.getContainerId()))
+                        .count() == crate.getCapacity()
+        );
+
+        boolean allStandsFull = p.getSalesStands().stream().allMatch(stand ->
+                p.getApples().stream()
+                        .filter(a -> a.getLocation() == AppleLocation.IN_SALES_STAND
+                                && stand.getId().equals(a.getContainerId()))
+                        .count() == stand.getCapacity()
+        );
+
+        if (allCratesFull && allStandsFull && !p.getCrates().isEmpty() && !p.getSalesStands().isEmpty()) {
+            score.setEconomy(score.getEconomy() + 1);
+        }
+
+        score.setEconomy(score.getEconomy() - penalty);
+
         if (score.isGameOver()) {
             state.setGameOver(true);
         }

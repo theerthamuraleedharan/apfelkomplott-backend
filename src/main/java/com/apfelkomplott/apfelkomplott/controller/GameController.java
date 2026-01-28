@@ -71,7 +71,7 @@ public class GameController {
         }
 
         roundEngine.runNextPhase(state);
-        state.setCurrentRound(state.getCurrentRound() + 1);
+      //  state.setCurrentRound(state.getCurrentRound() + 1);
 
         return gameStateService.updateState(state);
     }

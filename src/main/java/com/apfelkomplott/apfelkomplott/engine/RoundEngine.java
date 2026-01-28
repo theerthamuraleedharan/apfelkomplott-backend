@@ -73,6 +73,11 @@ public class RoundEngine {
 
     public void runNextPhase(GameState state) {
 
+        if (state.isGameOver()) {
+            return; // absolutely nothing happens
+        }
+
+
         switch (state.getCurrentPhase()) {
 
             case MOVE_MARKER -> state.setCurrentPhase(GamePhase.DRAW_EVENT);
@@ -112,9 +117,15 @@ public class RoundEngine {
             }
 
             case CARD_SCORING -> {
-                state.setCurrentPhase(GamePhase.MOVE_MARKER);
+                if (state.getCurrentRound() >= 15) {
+                    state.setGameOver(true);
+                    return;
+                }
                 state.setCurrentRound(state.getCurrentRound() + 1);
+                state.setCurrentPhase(GamePhase.MOVE_MARKER);
             }
+
+
         }
     }
 

@@ -3,8 +3,6 @@ package com.apfelkomplott.apfelkomplott.service;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class GameInitializer {
 
@@ -26,13 +24,16 @@ public class GameInitializer {
         GameState state = new GameState();
 
         Tree tree = new Tree();
-        tree.setId(UUID.randomUUID());
         tree.setType(TreeType.SEEDLING);
         tree.setFieldPosition(1);
 
+        Crate crate = new Crate();
+
         state.getPlantation().getTrees().add(tree);
+        state.getPlantation().getCrates().add(crate);
 
         return state;
     }
+
 }
 
