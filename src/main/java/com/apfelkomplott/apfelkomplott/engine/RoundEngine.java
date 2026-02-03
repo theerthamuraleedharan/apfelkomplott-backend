@@ -1,7 +1,9 @@
 package com.apfelkomplott.apfelkomplott.engine;
 
+import com.apfelkomplott.apfelkomplott.entity.EventCardDefinition;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
+import com.apfelkomplott.apfelkomplott.market.EventCardDeck;
 import com.apfelkomplott.apfelkomplott.service.*;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +17,17 @@ public class RoundEngine {
     private final ScoringService scoringService;
     private final CardScoringService cardScoringService;
 
+    private final EventCardDeck eventCardDeck;
+    private final EventService eventService;
+
+
     public RoundEngine(
             SellService sellService,
             DeliveryService deliveryService,
             HarvestService harvestService,
             RotationService rotationService,
             ScoringService scoringService,
-            CardScoringService cardScoringService) {
+            CardScoringService cardScoringService, EventCardDeck eventCardDeck, EventService eventService) {
 
         this.sellService = sellService;
         this.deliveryService = deliveryService;
@@ -29,15 +35,24 @@ public class RoundEngine {
         this.rotationService = rotationService;
         this.scoringService = scoringService;
         this.cardScoringService = cardScoringService;
+        this.eventCardDeck = eventCardDeck;
+        this.eventService = eventService;
     }
 
-    public void runFullRound(GameState state) {
+/*    public void runFullRound(GameState state) {
 
         // STEP 1
         state.setCurrentPhase(GamePhase.MOVE_MARKER);
 
+        state.getPlantation().resetApplePriceModifier();
+
         // STEP 2
         state.setCurrentPhase(GamePhase.DRAW_EVENT);
+
+        EventCardDefinition card = eventCardDeck.draw();
+        state.getActiveEvents().add(card);
+        eventService.applyEvent(state, card);
+
 
         // STEP 3
         state.setCurrentPhase(GamePhase.REFILL_CARDS);
@@ -68,67 +83,71 @@ public class RoundEngine {
         // STEP 10
         state.setCurrentPhase(GamePhase.CARD_SCORING);
         cardScoringService.applyCardScoring(state);
-    }
+    }*/
 
 
     public void runNextPhase(GameState state) {
 
-        if (state.isGameOver()) {
-            return; // absolutely nothing happens
-        }
-
+        if (state.isGameOver()) return;
 
         switch (state.getCurrentPhase()) {
 
             case MOVE_MARKER -> state.setCurrentPhase(GamePhase.DRAW_EVENT);
 
-            case DRAW_EVENT -> state.setCurrentPhase(GamePhase.REFILL_CARDS);
+            case DRAW_EVENT -> {
+                System.out.println(">>> DRAW_EVENT EXECUTED <<<");
+                state.getPlantation().resetApplePriceModifier();
+                state.getActiveEvents().clear();
 
-            case REFILL_CARDS -> {
-                state.setCurrentPhase(GamePhase.SELL);
-                sellService.sell(state);
+                EventCardDefinition card = eventCardDeck.draw();
+                state.getActiveEvents().add(card);
+                eventService.applyEvent(state, card);
+
+                state.setCurrentPhase(GamePhase.REFILL_CARDS);
             }
 
+            case REFILL_CARDS -> state.setCurrentPhase(GamePhase.SELL);
+
             case SELL -> {
+                sellService.sell(state);
                 state.setCurrentPhase(GamePhase.DELIVER);
-                deliveryService.deliver(state);
             }
 
             case DELIVER -> {
+                deliveryService.deliver(state);
                 state.setCurrentPhase(GamePhase.HARVEST);
-                harvestService.harvest(state);
             }
 
             case HARVEST -> {
+                harvestService.harvest(state);
                 state.setCurrentPhase(GamePhase.ROTATE);
-                rotationService.rotate(state);
             }
 
             case ROTATE -> {
+                rotationService.rotate(state);
                 state.setCurrentPhase(GamePhase.INTERMEDIATE_SCORING);
+            }
+
+            case INTERMEDIATE_SCORING -> {
                 scoringService.applyIntermediateScoring(state);
+                state.setCurrentPhase(GamePhase.INVEST);
             }
 
-            case INTERMEDIATE_SCORING -> state.setCurrentPhase(GamePhase.INVEST);
-
-            case INVEST -> {
-                state.setCurrentPhase(GamePhase.CARD_SCORING);
-                cardScoringService.applyCardScoring(state);
-            }
+            case INVEST -> state.setCurrentPhase(GamePhase.CARD_SCORING);
 
             case CARD_SCORING -> {
+                cardScoringService.applyCardScoring(state);
+
                 if (state.getCurrentRound() >= 15) {
                     state.setGameOver(true);
                     return;
                 }
+
                 state.setCurrentRound(state.getCurrentRound() + 1);
                 state.setCurrentPhase(GamePhase.MOVE_MARKER);
             }
-
-
         }
     }
-
 
 
 }

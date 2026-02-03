@@ -8,6 +8,9 @@ public class SellService {
 
     public void sell(GameState state) {
 
+        int basePrice = 1;
+        int modifier = state.getPlantation().getApplePriceModifier();
+
         for (Apple apple : state.getPlantation().getApples()) {
 
             // Only apples in sales stands can be sold
@@ -21,10 +24,15 @@ public class SellService {
                 continue;
             }
 
-            // Sell apple
+            // ✅ SELL APPLE
+            int finalPrice = basePrice + modifier;
+            if (finalPrice < 0) finalPrice = 0; // safety
+
+            state.setMoney(state.getMoney() + finalPrice);
+
             apple.setLocation(AppleLocation.SOLD);
-            apple.setContainerId(null); // no longer in a stand
-            state.setMoney(state.getMoney() + 1);
+            apple.setContainerId(null);
         }
     }
 }
+

@@ -62,8 +62,9 @@ public class GameController {
         return state;
     }
 
-    @PostMapping("/next-round")
-    public GameState nextRound() {
+    @PostMapping("/next-phase")
+    public GameState nextPhase() {
+
         GameState state = gameStateService.getState();
 
         if (state == null || state.isGameOver()) {
@@ -71,10 +72,9 @@ public class GameController {
         }
 
         roundEngine.runNextPhase(state);
-      //  state.setCurrentRound(state.getCurrentRound() + 1);
-
         return gameStateService.updateState(state);
     }
+
 
     // ===============================
     // INVESTMENT

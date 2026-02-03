@@ -12,9 +12,9 @@ public class GameState {
 
     private ScoreTrack scoreTrack;
     private Plantation plantation;
-
-    private List<EventCard> activeEvents;
     private List<ProductionCard> activeProductionCards;
+    private List<EventCardDefinition> activeEvents = new ArrayList<>();
+
 
     private boolean gameOver;
 
@@ -64,7 +64,7 @@ public class GameState {
         return plantation;
     }
 
-    public List<EventCard> getActiveEvents() {
+    public List<EventCardDefinition> getActiveEvents() {
         return activeEvents;
     }
 

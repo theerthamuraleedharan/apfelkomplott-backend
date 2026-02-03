@@ -11,8 +11,22 @@ public class InvestmentService {
 
         if (state.isGameOver()) return;
 
-        switch (type) {
+        // 🚫 Rule 1: Only allowed in INVEST phase
+        if (state.getCurrentPhase() != GamePhase.INVEST) {
+            throw new IllegalStateException(
+                    "Can only invest during INVEST phase"
+            );
+        }
 
+        // 🚫 Rule 2: Round 1 restrictions (PDF rule)
+        if (state.getCurrentRound() == 1 && isTreeOrLogistics(type)) {
+            throw new IllegalStateException(
+                    "Trees and logistics cannot be bought in Round 1"
+            );
+        }
+
+        // ✅ Execute investment
+        switch (type) {
             case BUY_SEEDLING -> buySeedling(state);
             case BUY_PRE_GROWN_TREE -> buyPreGrownTree(state);
             case BUY_CRATE -> buyCrate(state);
@@ -20,6 +34,15 @@ public class InvestmentService {
         }
     }
 
+    // ===== Helper =====
+    private boolean isTreeOrLogistics(InvestmentType type) {
+        return type == InvestmentType.BUY_SEEDLING
+                || type == InvestmentType.BUY_PRE_GROWN_TREE
+                || type == InvestmentType.BUY_CRATE
+                || type == InvestmentType.BUY_SALES_STAND;
+    }
+
+    // ===== Actions =====
     private void buySeedling(GameState state) {
         if (state.getMoney() < 3) return;
 
