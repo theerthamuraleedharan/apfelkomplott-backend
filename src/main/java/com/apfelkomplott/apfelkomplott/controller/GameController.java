@@ -11,6 +11,7 @@ import com.apfelkomplott.apfelkomplott.service.GameInitializer;
 import com.apfelkomplott.apfelkomplott.service.GameStateService;
 import com.apfelkomplott.apfelkomplott.service.InvestmentService;
 import com.apfelkomplott.apfelkomplott.service.ProductionCardPurchaseService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -97,7 +98,7 @@ public class GameController {
     }
 
     @PostMapping("/invest/production")
-    public GameState buyProductionCard(
+    public ResponseEntity<GameState> buyProductionCard(
             @RequestBody ProductionCardPurchaseRequest request) {
 
         GameState state = gameStateService.getState();
@@ -112,8 +113,9 @@ public class GameController {
         }
 
         purchaseService.buyProductionCard(state, request.getCardName());
-        return gameStateService.updateState(state);
+        return ResponseEntity.ok(state);
     }
+
 
     // ===============================
     // MARKET

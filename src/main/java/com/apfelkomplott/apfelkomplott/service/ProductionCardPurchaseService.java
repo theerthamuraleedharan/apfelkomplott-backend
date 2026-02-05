@@ -20,6 +20,8 @@ public class ProductionCardPurchaseService {
 
     public void buyProductionCard(GameState state, String cardName) {
 
+        System.out.println("BUY CARD START: " + cardName);
+
         if (state.isGameOver()) return;
 
         boolean alreadyOwned = state.getActiveProductionCards().stream()
@@ -27,14 +29,21 @@ public class ProductionCardPurchaseService {
 
         if (alreadyOwned) return;
 
+        System.out.println("TAKING CARD FROM MARKET");
+
         ProductionCardDefinition def = productionMarket.take(cardName);
+
+        System.out.println("CARD FOUND: " + def.getName());
 
         if (state.getMoney() < def.getCost()) {
             productionMarket.returnCard(def);
             return;
         }
 
+        System.out.println("CREATING CARD INSTANCE");
+
         state.getActiveProductionCards().add(cardFactory.create(def));
         state.setMoney(state.getMoney() - def.getCost());
     }
+
 }

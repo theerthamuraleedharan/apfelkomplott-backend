@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class InvestmentService {
 
     public void invest(GameState state, InvestmentType type) {
+        System.out.println("its here");
 
         if (state.isGameOver()) return;
 

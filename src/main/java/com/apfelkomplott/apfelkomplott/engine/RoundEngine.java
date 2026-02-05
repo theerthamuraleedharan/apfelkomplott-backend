@@ -96,15 +96,22 @@ public class RoundEngine {
 
             case DRAW_EVENT -> {
                 System.out.println(">>> DRAW_EVENT EXECUTED <<<");
+
                 state.getPlantation().resetApplePriceModifier();
                 state.getActiveEvents().clear();
 
                 EventCardDefinition card = eventCardDeck.draw();
-                state.getActiveEvents().add(card);
-                eventService.applyEvent(state, card);
+
+                if (card != null) {
+                    state.getActiveEvents().add(card);
+                    eventService.applyEvent(state, card);
+                } else {
+                    System.out.println("⚠️ No event cards left, skipping event");
+                }
 
                 state.setCurrentPhase(GamePhase.REFILL_CARDS);
             }
+
 
             case REFILL_CARDS -> state.setCurrentPhase(GamePhase.SELL);
 
