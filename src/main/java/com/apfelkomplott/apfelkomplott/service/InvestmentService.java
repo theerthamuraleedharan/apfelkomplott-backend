@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 public class InvestmentService {
 
     public void invest(GameState state, InvestmentType type) {
-        System.out.println("its here");
 
         if (state.isGameOver()) return;
 
@@ -20,11 +19,11 @@ public class InvestmentService {
         }
 
         // 🚫 Rule 2: Round 1 restrictions (PDF rule)
-        if (state.getCurrentRound() == 1 && isTreeOrLogistics(type)) {
+        /*if (state.getCurrentRound() == 1 && isTreeOrLogistics(type)) {
             throw new IllegalStateException(
                     "Trees and logistics cannot be bought in Round 1"
             );
-        }
+        }*/
 
         // ✅ Execute investment
         switch (type) {

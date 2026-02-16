@@ -48,6 +48,11 @@ public class GameController {
     // GAME LIFECYCLE
     // ===============================
 
+    @PostMapping("/start")
+    public GameState startGame() {
+        return gameStateService.createNewGame(new GameState());
+    }
+
     @PostMapping("/start-demo")
     public GameState startDemoGame() {
         GameState state = gameInitializer.createDemoGame();

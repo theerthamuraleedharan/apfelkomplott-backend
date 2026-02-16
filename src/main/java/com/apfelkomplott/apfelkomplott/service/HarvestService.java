@@ -8,39 +8,45 @@ public class HarvestService {
 
     public void harvest(GameState state) {
 
-        for (Tree tree : state.getPlantation().getTrees()) {
+        Plantation plantation = state.getPlantation();
 
-            if (tree.isMature()) {
+        for (Tree tree : plantation.getTrees()) {
+
+            if (tree.getFieldPosition() >= 3 && tree.getFieldPosition() <= 6) {
 
                 Apple apple = new Apple();
                 apple.setHarvestedRound(state.getCurrentRound());
 
-                boolean placed = placeInCrate(state, apple);
+                boolean placed = placeInTransport(state, apple);
 
                 if (!placed) {
                     apple.setLocation(AppleLocation.WASTED);
                 }
 
-                state.getPlantation().getApples().add(apple);
+                plantation.getApples().add(apple);
             }
         }
     }
 
-    private boolean placeInCrate(GameState state, Apple apple) {
+    private boolean placeInTransport(GameState state, Apple apple) {
 
-        for (Crate crate : state.getPlantation().getCrates()) {
+        Plantation plantation = state.getPlantation();
 
-            long count = state.getPlantation().getApples().stream()
-                    .filter(a -> a.getLocation() == AppleLocation.IN_CRATE
+        for (Crate crate : plantation.getCrates()) {
+
+            long count = plantation.getApples().stream()
+                    .filter(a -> a.getLocation() == AppleLocation.IN_TRANSPORT
                             && crate.getId().equals(a.getContainerId()))
                     .count();
 
             if (count < crate.getCapacity()) {
-                apple.setLocation(AppleLocation.IN_CRATE);
+
+                apple.setLocation(AppleLocation.IN_TRANSPORT);
                 apple.setContainerId(crate.getId());
                 return true;
             }
         }
-        return false;
+
+        return false; // no space -> wasted
     }
 }

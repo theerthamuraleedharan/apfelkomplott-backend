@@ -12,6 +12,20 @@ public class Plantation {
 
     private int applePriceModifier = 0;
 
+    private int discardedApples = 0;
+
+    public void incrementDiscardedApples() {
+        discardedApples++;
+    }
+
+    public int getDiscardedApples() {
+        return discardedApples;
+    }
+
+    public void resetDiscardedApples() {
+        discardedApples = 0;
+    }
+
     public List<Tree> getTrees() {
         return trees;
     }

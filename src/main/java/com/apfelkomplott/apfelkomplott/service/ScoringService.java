@@ -8,69 +8,92 @@ public class ScoringService {
 
     public void applyIntermediateScoring(GameState state) {
 
-        // 📄 Rule: scoring only from round 3 onward
-        if (state.getCurrentRound() < 3) {
-            return;
-        }
+        //  Only from round 3 onward
+        if (state.getCurrentRound() < 3) return;
 
+        Plantation plantation = state.getPlantation();
         ScoreTrack score = state.getScoreTrack();
-        Plantation p = state.getPlantation();
 
-        int penalty = 0;
+        int economyChange = 0;
 
-        // 1️⃣ Wasted apples
-        long wasted = p.getApples().stream()
+        // =========================
+        // 1️⃣ WASTED APPLES PENALTY
+        // =========================
+
+        long wasted = plantation.getApples().stream()
                 .filter(a -> a.getLocation() == AppleLocation.WASTED)
                 .count();
 
-        penalty += (int) (wasted / 3);
+        int wastePenalty = (int) (wasted / 3);
+        economyChange -= wastePenalty;
 
-        // 🔥 remove wasted apples so they are not counted again
-        p.getApples().removeIf(a -> a.getLocation() == AppleLocation.WASTED);
-
-        // 2️⃣ Empty crates
-        for (Crate crate : p.getCrates()) {
-            boolean empty = p.getApples().stream()
-                    .noneMatch(a ->
-                            a.getLocation() == AppleLocation.IN_CRATE &&
-                                    crate.getId().equals(a.getContainerId())
-                    );
-
-            if (empty) penalty++;
-        }
-
-        // 3️⃣ Empty sales stands
-        for (SalesStand stand : p.getSalesStands()) {
-            boolean empty = p.getApples().stream()
-                    .noneMatch(a ->
-                            a.getLocation() == AppleLocation.IN_SALES_STAND &&
-                                    stand.getId().equals(a.getContainerId())
-                    );
-
-            if (empty) penalty++;
-        }
-
-        // 4️⃣ PERFECT BALANCE BONUS (+1)
-        boolean allCratesFull = p.getCrates().stream().allMatch(crate ->
-                p.getApples().stream()
-                        .filter(a -> a.getLocation() == AppleLocation.IN_CRATE
-                                && crate.getId().equals(a.getContainerId()))
-                        .count() == crate.getCapacity()
+        // Remove wasted apples so they don't count again
+        plantation.getApples().removeIf(
+                a -> a.getLocation() == AppleLocation.WASTED
         );
 
-        boolean allStandsFull = p.getSalesStands().stream().allMatch(stand ->
-                p.getApples().stream()
+        // =========================
+        // 2️⃣ EMPTY CRATES PENALTY
+        // =========================
+
+        for (Crate crate : plantation.getCrates()) {
+
+            long count = plantation.getApples().stream()
+                    .filter(a -> a.getLocation() == AppleLocation.IN_TRANSPORT
+                            && crate.getId().equals(a.getContainerId()))
+                    .count();
+
+            if (count == 0) {
+                economyChange -= 1;
+            }
+        }
+
+        // =========================
+        // 3️⃣ EMPTY SALES STANDS PENALTY
+        // =========================
+
+        for (SalesStand stand : plantation.getSalesStands()) {
+
+            long count = plantation.getApples().stream()
+                    .filter(a -> a.getLocation() == AppleLocation.IN_SALES_STAND
+                            && stand.getId().equals(a.getContainerId()))
+                    .count();
+
+            if (count == 0) {
+                economyChange -= 1;
+            }
+        }
+
+        // =========================
+        // 4️⃣ PERFECT BALANCE BONUS
+        // =========================
+
+        boolean allTransportFull = plantation.getCrates().stream()
+                .allMatch(crate -> plantation.getApples().stream()
+                        .filter(a -> a.getLocation() == AppleLocation.IN_TRANSPORT
+                                && crate.getId().equals(a.getContainerId()))
+                        .count() == crate.getCapacity());
+
+        boolean allSalesFull = plantation.getSalesStands().stream()
+                .allMatch(stand -> plantation.getApples().stream()
                         .filter(a -> a.getLocation() == AppleLocation.IN_SALES_STAND
                                 && stand.getId().equals(a.getContainerId()))
-                        .count() == stand.getCapacity()
-        );
+                        .count() == stand.getCapacity());
 
-        if (allCratesFull && allStandsFull && !p.getCrates().isEmpty() && !p.getSalesStands().isEmpty()) {
-            score.setEconomy(score.getEconomy() + 1);
+        if (allTransportFull && allSalesFull && wasted == 0
+                && !plantation.getCrates().isEmpty()
+                && !plantation.getSalesStands().isEmpty()) {
+
+            economyChange += 1;
         }
 
-        score.setEconomy(score.getEconomy() - penalty);
+        // =========================
+        // APPLY RESULT
+        // =========================
 
+        score.setEconomy(score.getEconomy() + economyChange);
+
+        // Game over check (if your ScoreTrack has thresholds)
         if (score.isGameOver()) {
             state.setGameOver(true);
         }

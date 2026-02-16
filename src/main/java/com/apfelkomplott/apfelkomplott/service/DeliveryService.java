@@ -3,29 +3,35 @@ package com.apfelkomplott.apfelkomplott.service;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DeliveryService {
 
     public void deliver(GameState state) {
 
-        for (Apple apple : state.getPlantation().getApples()) {
+        Plantation plantation = state.getPlantation();
 
-            if (apple.getLocation() != AppleLocation.IN_CRATE) continue;
+        List<Apple> apples = plantation.getApples();
 
-            // Apple must be at least 1 round old
-            if (apple.getHarvestedRound() > state.getCurrentRound() - 1) continue;
+        for (SalesStand stand : plantation.getSalesStands()) {
 
-            for (SalesStand stand : state.getPlantation().getSalesStands()) {
+            long standCount = apples.stream()
+                    .filter(a -> a.getLocation() == AppleLocation.IN_SALES_STAND
+                            && stand.getId().equals(a.getContainerId()))
+                    .count();
 
-                long count = state.getPlantation().getApples().stream()
-                        .filter(a -> a.getLocation() == AppleLocation.IN_SALES_STAND
-                                && stand.getId().equals(a.getContainerId()))
-                        .count();
+            for (Apple apple : apples) {
 
-                if (count < stand.getCapacity()) {
+                if (standCount >= stand.getCapacity())
+                    break;
+
+                if (apple.getLocation() == AppleLocation.IN_TRANSPORT) {
+
                     apple.setLocation(AppleLocation.IN_SALES_STAND);
                     apple.setContainerId(stand.getId());
-                    break;
+
+                    standCount++;
                 }
             }
         }

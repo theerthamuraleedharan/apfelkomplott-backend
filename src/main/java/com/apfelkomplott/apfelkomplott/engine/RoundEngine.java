@@ -16,7 +16,6 @@ public class RoundEngine {
     private final RotationService rotationService;
     private final ScoringService scoringService;
     private final CardScoringService cardScoringService;
-
     private final EventCardDeck eventCardDeck;
     private final EventService eventService;
 
@@ -39,94 +38,65 @@ public class RoundEngine {
         this.eventService = eventService;
     }
 
-/*    public void runFullRound(GameState state) {
-
-        // STEP 1
-        state.setCurrentPhase(GamePhase.MOVE_MARKER);
-
-        state.getPlantation().resetApplePriceModifier();
-
-        // STEP 2
-        state.setCurrentPhase(GamePhase.DRAW_EVENT);
-
-        EventCardDefinition card = eventCardDeck.draw();
-        state.getActiveEvents().add(card);
-        eventService.applyEvent(state, card);
-
-
-        // STEP 3
-        state.setCurrentPhase(GamePhase.REFILL_CARDS);
-
-        // STEP 4
-        state.setCurrentPhase(GamePhase.SELL);
-        sellService.sell(state);
-
-        // STEP 5
-        state.setCurrentPhase(GamePhase.DELIVER);
-        deliveryService.deliver(state);
-
-        // STEP 6 (THIS IS WHAT YOU NEED)
-        state.setCurrentPhase(GamePhase.HARVEST);
-        harvestService.harvest(state);
-
-        // STEP 7
-        state.setCurrentPhase(GamePhase.ROTATE);
-        rotationService.rotate(state);
-
-        // STEP 8
-        state.setCurrentPhase(GamePhase.INTERMEDIATE_SCORING);
-        scoringService.applyIntermediateScoring(state);
-
-        // STEP 9 (UI handles investments)
-        state.setCurrentPhase(GamePhase.INVEST);
-
-        // STEP 10
-        state.setCurrentPhase(GamePhase.CARD_SCORING);
-        cardScoringService.applyCardScoring(state);
-    }*/
-
-
     public void runNextPhase(GameState state) {
 
         if (state.isGameOver()) return;
 
         switch (state.getCurrentPhase()) {
 
-            case MOVE_MARKER -> state.setCurrentPhase(GamePhase.DRAW_EVENT);
+            case MOVE_MARKER -> {
+                if (state.getCurrentRound() >= 15) {
+                    state.setGameOver(true);
+                    return;
+                }
+                state.setCurrentPhase(GamePhase.DRAW_EVENT);
+            }
 
             case DRAW_EVENT -> {
-                System.out.println(">>> DRAW_EVENT EXECUTED <<<");
+
+                //  No event in round 1
+                if (state.getCurrentRound() == 1) {
+                    state.setCurrentPhase(GamePhase.REFILL_CARDS);
+                    return;
+                }
 
                 state.getPlantation().resetApplePriceModifier();
                 state.getActiveEvents().clear();
 
                 EventCardDefinition card = eventCardDeck.draw();
-
-                if (card != null) {
-                    state.getActiveEvents().add(card);
-                    eventService.applyEvent(state, card);
-                } else {
-                    System.out.println("⚠️ No event cards left, skipping event");
-                }
+                state.getActiveEvents().add(card);
+                eventService.applyEvent(state, card);
 
                 state.setCurrentPhase(GamePhase.REFILL_CARDS);
             }
 
-
-            case REFILL_CARDS -> state.setCurrentPhase(GamePhase.SELL);
+            case REFILL_CARDS ->
+                    state.setCurrentPhase(GamePhase.SELL);
 
             case SELL -> {
-                sellService.sell(state);
+
+                if (state.getCurrentRound() >= 5) {
+                    sellService.sell(state);
+                }
+
                 state.setCurrentPhase(GamePhase.DELIVER);
             }
 
             case DELIVER -> {
-                deliveryService.deliver(state);
+
+                if (state.getCurrentRound() >= 4) {
+                    deliveryService.deliver(state);
+                }
+
                 state.setCurrentPhase(GamePhase.HARVEST);
             }
 
             case HARVEST -> {
-                harvestService.harvest(state);
+
+                if (state.getCurrentRound() >= 3) {
+                    harvestService.harvest(state);
+                }
+
                 state.setCurrentPhase(GamePhase.ROTATE);
             }
 
@@ -136,25 +106,24 @@ public class RoundEngine {
             }
 
             case INTERMEDIATE_SCORING -> {
-                scoringService.applyIntermediateScoring(state);
+
+                if (state.getCurrentRound() >= 3) {
+                    scoringService.applyIntermediateScoring(state);
+                }
+
                 state.setCurrentPhase(GamePhase.INVEST);
             }
 
-            case INVEST -> state.setCurrentPhase(GamePhase.CARD_SCORING);
+            case INVEST ->
+                    state.setCurrentPhase(GamePhase.CARD_SCORING);
 
             case CARD_SCORING -> {
-                cardScoringService.applyCardScoring(state);
 
-                if (state.getCurrentRound() >= 15) {
-                    state.setGameOver(true);
-                    return;
-                }
+                cardScoringService.applyCardScoring(state);
 
                 state.setCurrentRound(state.getCurrentRound() + 1);
                 state.setCurrentPhase(GamePhase.MOVE_MARKER);
             }
         }
     }
-
-
 }

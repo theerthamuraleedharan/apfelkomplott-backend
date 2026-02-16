@@ -5,5 +5,8 @@ public enum AppleLocation {
     IN_CRATE,
     IN_SALES_STAND,
     SOLD,
-    WASTED
+    WASTED,
+
+    REMOVED,
+    IN_TRANSPORT
 }

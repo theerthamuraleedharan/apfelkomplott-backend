@@ -27,10 +27,7 @@ public class GameInitializer {
         tree.setType(TreeType.SEEDLING);
         tree.setFieldPosition(1);
 
-        Crate crate = new Crate();
-
         state.getPlantation().getTrees().add(tree);
-        state.getPlantation().getCrates().add(crate);
 
         return state;
     }
