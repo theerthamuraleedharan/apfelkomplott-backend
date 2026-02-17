@@ -1,15 +1,15 @@
 package com.apfelkomplott.apfelkomplott.service;
 
+import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
-import java.util.List;
 
 @Service
 public class SellService {
 
-    public void sell(GameState state) {
+    public SellResult sell(GameState state) {
 
         Plantation plantation = state.getPlantation();
 
@@ -19,6 +19,7 @@ public class SellService {
         Iterator<Apple> iterator = plantation.getApples().iterator();
 
         int soldCount = 0;
+        int totalEarned = 0;
 
         while (iterator.hasNext()) {
 
@@ -27,15 +28,17 @@ public class SellService {
             if (apple.getLocation() == AppleLocation.IN_SALES_STAND) {
 
                 int finalPrice = basePrice + modifier;
-                state.setMoney(state.getMoney() + finalPrice);
 
+                totalEarned += finalPrice;
                 soldCount++;
+
                 iterator.remove();
             }
         }
 
-        System.out.println("Sold apples: " + soldCount);
-        System.out.println("Money after sell: " + state.getMoney());
+        state.setMoney(state.getMoney() + totalEarned);
+
+        return new SellResult(soldCount, totalEarned);
     }
 }
 

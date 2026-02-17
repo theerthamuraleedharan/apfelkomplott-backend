@@ -1,8 +1,9 @@
 package com.apfelkomplott.apfelkomplott.engine;
 
-import com.apfelkomplott.apfelkomplott.entity.EventCardDefinition;
+import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
+import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.market.EventCardDeck;
 import com.apfelkomplott.apfelkomplott.service.*;
 import org.springframework.stereotype.Component;
@@ -50,12 +51,16 @@ public class RoundEngine {
                     return;
                 }
                 state.setCurrentPhase(GamePhase.DRAW_EVENT);
+                state.setLastSellResult(null);
+                state.setLastScoreResult(null);
+
             }
+
 
             case DRAW_EVENT -> {
 
                 //  No event in round 1
-                if (state.getCurrentRound() == 1) {
+               /* if (state.getCurrentRound() == 1) {
                     state.setCurrentPhase(GamePhase.REFILL_CARDS);
                     return;
                 }
@@ -65,7 +70,7 @@ public class RoundEngine {
 
                 EventCardDefinition card = eventCardDeck.draw();
                 state.getActiveEvents().add(card);
-                eventService.applyEvent(state, card);
+                eventService.applyEvent(state, card);*/
 
                 state.setCurrentPhase(GamePhase.REFILL_CARDS);
             }
@@ -75,12 +80,12 @@ public class RoundEngine {
 
             case SELL -> {
 
-                if (state.getCurrentRound() >= 5) {
-                    sellService.sell(state);
-                }
+                SellResult result = sellService.sell(state);
+                state.setLastSellResult(result);
 
                 state.setCurrentPhase(GamePhase.DELIVER);
             }
+
 
             case DELIVER -> {
 
@@ -107,15 +112,28 @@ public class RoundEngine {
 
             case INTERMEDIATE_SCORING -> {
 
-                if (state.getCurrentRound() >= 3) {
-                    scoringService.applyIntermediateScoring(state);
+                // If scoring not yet calculated
+                if (state.getLastScoreResult() == null
+                        && state.getCurrentRound() >= 3) {
+
+                    ScoreResult result =
+                            scoringService.applyIntermediateScoring(state);
+
+                    state.setLastScoreResult(result);
+
+                    // STOP here so UI can show popup
+                    return;
                 }
 
+                // If already calculated → move forward
                 state.setCurrentPhase(GamePhase.INVEST);
             }
 
+
+
             case INVEST ->
                     state.setCurrentPhase(GamePhase.CARD_SCORING);
+
 
             case CARD_SCORING -> {
 

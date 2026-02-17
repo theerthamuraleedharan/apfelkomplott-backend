@@ -1,5 +1,7 @@
 package com.apfelkomplott.apfelkomplott.entity;
 
+import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,15 +9,13 @@ public class GameState {
 
     private int currentRound;
     private GamePhase currentPhase;
-
     private int money;
-
+    private SellResult lastSellResult;
     private ScoreTrack scoreTrack;
     private Plantation plantation;
+    private ScoreResult lastScoreResult;
     private List<ProductionCard> activeProductionCards;
     private List<EventCardDefinition> activeEvents = new ArrayList<>();
-
-
     private boolean gameOver;
 
     public GameState() {
@@ -79,4 +79,22 @@ public class GameState {
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
+
+    public SellResult getLastSellResult() {
+        return lastSellResult;
+    }
+
+    public void setLastSellResult(SellResult lastSellResult) {
+        this.lastSellResult = lastSellResult;
+    }
+
+    public ScoreResult getLastScoreResult() {
+        return lastScoreResult;
+    }
+
+    public void setLastScoreResult(ScoreResult lastScoreResult) {
+        this.lastScoreResult = lastScoreResult;
+    }
+
 }
+

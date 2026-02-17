@@ -6,36 +6,37 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScoringService {
 
-    public void applyIntermediateScoring(GameState state) {
+    public ScoreResult applyIntermediateScoring(GameState state) {
 
-        //  Only from round 3 onward
-        if (state.getCurrentRound() < 3) return;
+        if (state.getCurrentRound() < 3) {
+            return new ScoreResult(0, 0, 0);
+        }
 
         Plantation plantation = state.getPlantation();
         ScoreTrack score = state.getScoreTrack();
 
         int economyChange = 0;
+        int environmentChange = 0;
+        int healthChange = 0;
 
-        // =========================
-        // 1️⃣ WASTED APPLES PENALTY
-        // =========================
+        ScoreResult result = new ScoreResult(0, 0, 0);
 
+        // 1️⃣ WASTED APPLES
         long wasted = plantation.getApples().stream()
                 .filter(a -> a.getLocation() == AppleLocation.WASTED)
                 .count();
 
         int wastePenalty = (int) (wasted / 3);
-        economyChange -= wastePenalty;
+        if (wastePenalty > 0) {
+            economyChange -= wastePenalty;
+            result.addReason("-" + wastePenalty + " Economy (Wasted apples)");
+        }
 
-        // Remove wasted apples so they don't count again
         plantation.getApples().removeIf(
                 a -> a.getLocation() == AppleLocation.WASTED
         );
 
-        // =========================
-        // 2️⃣ EMPTY CRATES PENALTY
-        // =========================
-
+        // 2️⃣ EMPTY CRATES
         for (Crate crate : plantation.getCrates()) {
 
             long count = plantation.getApples().stream()
@@ -45,13 +46,11 @@ public class ScoringService {
 
             if (count == 0) {
                 economyChange -= 1;
+                result.addReason("-1 Economy (Empty transport crate)");
             }
         }
 
-        // =========================
-        // 3️⃣ EMPTY SALES STANDS PENALTY
-        // =========================
-
+        // 3️⃣ EMPTY SALES STANDS
         for (SalesStand stand : plantation.getSalesStands()) {
 
             long count = plantation.getApples().stream()
@@ -61,13 +60,11 @@ public class ScoringService {
 
             if (count == 0) {
                 economyChange -= 1;
+                result.addReason("-1 Economy (Empty sales stand)");
             }
         }
 
-        // =========================
-        // 4️⃣ PERFECT BALANCE BONUS
-        // =========================
-
+        // 4️⃣ PERFECT BONUS
         boolean allTransportFull = plantation.getCrates().stream()
                 .allMatch(crate -> plantation.getApples().stream()
                         .filter(a -> a.getLocation() == AppleLocation.IN_TRANSPORT
@@ -85,17 +82,36 @@ public class ScoringService {
                 && !plantation.getSalesStands().isEmpty()) {
 
             economyChange += 1;
+            result.addReason("+1 Economy (Perfect balance bonus)");
         }
 
-        // =========================
-        // APPLY RESULT
-        // =========================
-
+        // Apply totals
         score.setEconomy(score.getEconomy() + economyChange);
 
-        // Game over check (if your ScoreTrack has thresholds)
         if (score.isGameOver()) {
             state.setGameOver(true);
         }
+
+        // Set totals in result
+        // Apply totals
+        score.setEconomy(score.getEconomy() + economyChange);
+        score.setEnvironment(score.getEnvironment() + environmentChange);
+        score.setHealth(score.getHealth() + healthChange);
+
+        if (score.isGameOver()) {
+            state.setGameOver(true);
+        }
+
+        // set totals into existing result object
+        result.setEconomyChange(economyChange);
+        result.setEnvironmentChange(environmentChange);
+        result.setHealthChange(healthChange);
+
+        System.out.println("Reasons: " + result.getReasons());
+
+        return result;
+
+
     }
+
 }
