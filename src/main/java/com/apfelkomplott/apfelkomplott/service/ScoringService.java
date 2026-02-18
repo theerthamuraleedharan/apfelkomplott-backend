@@ -85,13 +85,6 @@ public class ScoringService {
             result.addReason("+1 Economy (Perfect balance bonus)");
         }
 
-        // Apply totals
-        score.setEconomy(score.getEconomy() + economyChange);
-
-        if (score.isGameOver()) {
-            state.setGameOver(true);
-        }
-
         // Set totals in result
         // Apply totals
         score.setEconomy(score.getEconomy() + economyChange);
@@ -106,8 +99,6 @@ public class ScoringService {
         result.setEconomyChange(economyChange);
         result.setEnvironmentChange(environmentChange);
         result.setHealthChange(healthChange);
-
-        System.out.println("Reasons: " + result.getReasons());
 
         return result;
 
