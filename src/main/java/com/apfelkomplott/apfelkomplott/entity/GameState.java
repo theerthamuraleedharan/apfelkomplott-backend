@@ -1,5 +1,6 @@
 package com.apfelkomplott.apfelkomplott.entity;
 
+import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class GameState {
     private ScoreTrack scoreTrack;
     private Plantation plantation;
     private ScoreResult lastScoreResult;
+    private FarmingMode farmingMode;
     private List<ProductionCard> activeProductionCards;
     private List<EventCardDefinition> activeEvents = new ArrayList<>();
     private boolean gameOver;
@@ -94,6 +96,14 @@ public class GameState {
 
     public void setLastScoreResult(ScoreResult lastScoreResult) {
         this.lastScoreResult = lastScoreResult;
+    }
+
+    public FarmingMode getFarmingMode() {
+        return farmingMode;
+    }
+
+    public void setFarmingMode(FarmingMode farmingMode) {
+        this.farmingMode = farmingMode;
     }
 
 }

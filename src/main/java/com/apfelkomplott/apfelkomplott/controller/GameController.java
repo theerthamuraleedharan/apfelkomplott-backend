@@ -1,5 +1,6 @@
 package com.apfelkomplott.apfelkomplott.controller;
 
+import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
 import com.apfelkomplott.apfelkomplott.controller.dto.ProductionCardPurchaseRequest;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
@@ -51,6 +52,13 @@ public class GameController {
     @PostMapping("/start")
     public GameState startGame() {
         return gameStateService.createNewGame(new GameState());
+    }
+
+    @PostMapping("/game/start")
+    public GameState startGame(@RequestParam FarmingMode mode) {
+        GameState state = new GameState();
+        state.setFarmingMode(mode);
+        return state;
     }
 
     @PostMapping("/start-demo")
