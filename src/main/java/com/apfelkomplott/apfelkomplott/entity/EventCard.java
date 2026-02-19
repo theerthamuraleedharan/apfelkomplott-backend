@@ -1,15 +1,26 @@
 package com.apfelkomplott.apfelkomplott.entity;
 
-public interface EventCard {
+import com.apfelkomplott.apfelkomplott.Enum.EventEffectType;
+import com.apfelkomplott.apfelkomplott.Enum.EventTiming;
 
-    String getName();
+public class EventCard {
 
-    // Called immediately when drawn
-    void onDraw(GameState state);
+    private String title;
+    private String description;
+    private EventTiming timing;
+    private EventEffectType effectType;
 
-    // Applied every round while active
-    void apply(GameState state);
+    public EventCard(String title, String description,
+                     EventTiming timing,
+                     EventEffectType effectType) {
+        this.title = title;
+        this.description = description;
+        this.timing = timing;
+        this.effectType = effectType;
+    }
 
-    // Should it apply in the same round?
-    boolean isImmediate();
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
+    public EventTiming getTiming() { return timing; }
+    public EventEffectType getEffectType() { return effectType; }
 }

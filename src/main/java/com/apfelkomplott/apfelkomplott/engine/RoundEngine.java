@@ -1,6 +1,7 @@
 package com.apfelkomplott.apfelkomplott.engine;
 
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
+import com.apfelkomplott.apfelkomplott.entity.EventCard;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
@@ -59,21 +60,14 @@ public class RoundEngine {
 
             case DRAW_EVENT -> {
 
-                //  No event in round 1
-               /* if (state.getCurrentRound() == 1) {
-                    state.setCurrentPhase(GamePhase.REFILL_CARDS);
-                    return;
-                }
+                EventCard drawnCard = eventService.drawEvent(state);
 
-                state.getPlantation().resetApplePriceModifier();
-                state.getActiveEvents().clear();
-
-                EventCardDefinition card = eventCardDeck.draw();
-                state.getActiveEvents().add(card);
-                eventService.applyEvent(state, card);*/
+                state.setLastDrawnEvent(drawnCard); // for UI popup
 
                 state.setCurrentPhase(GamePhase.REFILL_CARDS);
             }
+
+
 
             case REFILL_CARDS ->
                     state.setCurrentPhase(GamePhase.SELL);

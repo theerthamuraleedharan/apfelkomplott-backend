@@ -4,17 +4,16 @@ import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
 import com.apfelkomplott.apfelkomplott.controller.dto.ProductionCardPurchaseRequest;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
+import com.apfelkomplott.apfelkomplott.entity.EventCard;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ProductionCardDefinition;
 import com.apfelkomplott.apfelkomplott.market.ProductionMarket;
-import com.apfelkomplott.apfelkomplott.service.GameInitializer;
-import com.apfelkomplott.apfelkomplott.service.GameStateService;
-import com.apfelkomplott.apfelkomplott.service.InvestmentService;
-import com.apfelkomplott.apfelkomplott.service.ProductionCardPurchaseService;
+import com.apfelkomplott.apfelkomplott.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -29,37 +28,57 @@ public class GameController {
     private final GameStateService gameStateService;
     private final ProductionCardPurchaseService purchaseService;
 
+    private final EventService eventService;
+
     public GameController(
             GameInitializer gameInitializer,
             RoundEngine roundEngine,
             InvestmentService investmentService,
             ProductionMarket productionMarket,
             GameStateService gameStateService,
-            ProductionCardPurchaseService purchaseService
-    ) {
+            ProductionCardPurchaseService purchaseService,
+            EventService eventService) {
         this.gameInitializer = gameInitializer;
         this.roundEngine = roundEngine;
         this.investmentService = investmentService;
         this.productionMarket = productionMarket;
         this.gameStateService = gameStateService;
         this.purchaseService = purchaseService;
+        this.eventService = eventService;
     }
 
     // ===============================
     // GAME LIFECYCLE
     // ===============================
 
-    @PostMapping("/start")
+   /* @PostMapping("/start")
     public GameState startGame() {
         return gameStateService.createNewGame(new GameState());
     }
+*/
 
-    @PostMapping("/game/start")
+    @PostMapping("/start")
     public GameState startGame(@RequestParam FarmingMode mode) {
+
+        System.out.println("START ENDPOINT HIT");
+        System.out.println("Mode: " + mode);
+
+        if (mode == null) {
+            System.out.println("MODE IS NULL");
+        }
+
         GameState state = new GameState();
         state.setFarmingMode(mode);
-        return state;
+
+        List<EventCard> deck = eventService.createEventDeck();
+        Collections.shuffle(deck);
+        state.setEventDeck(deck);
+
+        return gameStateService.createNewGame(state);
     }
+
+
+
 
     @PostMapping("/start-demo")
     public GameState startDemoGame() {

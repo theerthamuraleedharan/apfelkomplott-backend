@@ -16,8 +16,14 @@ public class GameState {
     private Plantation plantation;
     private ScoreResult lastScoreResult;
     private FarmingMode farmingMode;
+
+    private EventCard lastDrawnEvent;
+
     private List<ProductionCard> activeProductionCards;
-    private List<EventCardDefinition> activeEvents = new ArrayList<>();
+
+    private List<EventCard> eventDeck = new ArrayList<>();
+    private List<EventCard> activeEvents = new ArrayList<>();
+
     private boolean gameOver;
 
     public GameState() {
@@ -66,10 +72,6 @@ public class GameState {
         return plantation;
     }
 
-    public List<EventCardDefinition> getActiveEvents() {
-        return activeEvents;
-    }
-
     public List<ProductionCard> getActiveProductionCards() {
         return activeProductionCards;
     }
@@ -106,5 +108,28 @@ public class GameState {
         this.farmingMode = farmingMode;
     }
 
+    public List<EventCard> getEventDeck() {
+        return eventDeck;
+    }
+
+    public void setEventDeck(List<EventCard> eventDeck) {
+        this.eventDeck = eventDeck;
+    }
+
+    public List<EventCard> getActiveEvents() {
+        return activeEvents;
+    }
+
+    public void setActiveEvents(List<EventCard> activeEvents) {
+        this.activeEvents = activeEvents;
+    }
+
+    public EventCard getLastDrawnEvent() {
+        return lastDrawnEvent;
+    }
+
+    public void setLastDrawnEvent(EventCard lastDrawnEvent) {
+        this.lastDrawnEvent = lastDrawnEvent;
+    }
 }
 
