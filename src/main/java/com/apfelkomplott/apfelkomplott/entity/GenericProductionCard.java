@@ -1,4 +1,4 @@
-package com.apfelkomplott.apfelkomplott.entity.cards;
+package com.apfelkomplott.apfelkomplott.entity;
 
 import com.apfelkomplott.apfelkomplott.entity.*;
 import java.util.HashSet;
