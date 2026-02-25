@@ -33,37 +33,7 @@ public class ProductionCardService {
     for (ProductionCardDef c : all) state.getProductionDrawPile().add(c.getId());
 
     refillMarketToFive(state);
-    refreshMarketView(state); // ✅ add this
-  }
-
-  /** Step 3: refill open row to 5 */
-  public void refillMarketToFive(GameState state) {
-    while (state.getMarketCardIds().size() < 5) {
-
-      if (state.getProductionDrawPile().isEmpty()) {
-        // optional reshuffle discard back
-        if (state.getProductionDiscardPile().isEmpty()) break;
-        Collections.shuffle(state.getProductionDiscardPile(), random);
-        state.getProductionDrawPile().addAll(state.getProductionDiscardPile());
-        state.getProductionDiscardPile().clear();
-      }
-
-      if (state.getProductionDrawPile().isEmpty()) break;
-
-      String nextId = state.getProductionDrawPile().remove(0);
-
-      // avoid duplicates in row or already-active long-term
-      boolean alreadyInMarket = state.getMarketCardIds().contains(nextId);
-      boolean alreadyActive = state.getActiveLongTerm().stream()
-              .anyMatch(a -> nextId.equals(a.getCardId()));
-
-      if (alreadyInMarket || alreadyActive) {
-        state.getProductionDiscardPile().add(nextId);
-        continue;
-      }
-
-      state.getMarketCardIds().add(nextId);
-    }
+    refreshMarketView(state);
   }
 
   /** Buy: remove immediately, apply Year-1 immediately, store if long-term */
@@ -90,10 +60,13 @@ public class ProductionCardService {
     // pay
     state.setMoney(state.getMoney() - cost);
 
-    // remove from open row immediately
-    state.getMarketCardIds().remove(cardId);
+    // ✅ DO NOT REMOVE. Keep the same slot empty until Step 3.
+    int idx = state.getMarketCardIds().indexOf(cardId);
+    if (idx >= 0) {
+      state.getMarketCardIds().set(idx, null);
+    }
 
-    // Year 1 effects now
+    // apply Year 1 now
     applyEffectsForYear(state, card, 1);
 
     // store
@@ -103,10 +76,6 @@ public class ProductionCardService {
       state.getProductionDiscardPile().add(cardId);
       state.getShortTermUsedThisRound().add(cardId);
     }
-
-    // ✅ refill + sync UI cards
-    refillMarketToFive(state);
-    refreshMarketView(state);
 
     if (state.getScoreTrack().isGameOver()) {
       state.setGameOver(true);
@@ -173,18 +142,60 @@ public class ProductionCardService {
     }
   }
 
-    public void refreshMarketView(GameState state) {
-        state.setMarket(
-                state.getMarketCardIds().stream()
-                        .map(repo::getById)
-                        .toList()
-        );
-    }
+  public void refreshMarketView(GameState state) {
+    state.setMarket(
+            state.getMarketCardIds().stream()
+                    .map(id -> id == null ? null : repo.getById(id))
+                    .toList()
+    );
+  }
 
   public List<ProductionCardDef> getMarketCards(GameState state) {
     return state.getMarketCardIds().stream()
-            .map(repo::getById)
+            .map(id -> id == null ? null : repo.getById(id))
             .toList();
+  }
+
+  public void refillMarketToFive(GameState state) {
+    // Ensure the market always has 5 slots (may contain null holes)
+    while (state.getMarketCardIds().size() < 5) {
+      state.getMarketCardIds().add(null);
+    }
+
+    // Fill holes one-by-one
+    while (state.getMarketCardIds().contains(null)) {
+
+      if (state.getProductionDrawPile().isEmpty()) {
+        if (state.getProductionDiscardPile().isEmpty()) break;
+        Collections.shuffle(state.getProductionDiscardPile(), random);
+        state.getProductionDrawPile().addAll(state.getProductionDiscardPile());
+        state.getProductionDiscardPile().clear();
+      }
+
+      if (state.getProductionDrawPile().isEmpty()) break;
+
+      String nextId = state.getProductionDrawPile().remove(0);
+
+      // avoid duplicates in row or already-active long-term
+      boolean alreadyInMarket = state.getMarketCardIds().stream()
+              .filter(Objects::nonNull)
+              .anyMatch(id -> id.equals(nextId));
+
+      boolean alreadyActive = state.getActiveLongTerm().stream()
+              .anyMatch(a -> nextId.equals(a.getCardId()));
+
+      if (alreadyInMarket || alreadyActive) {
+        state.getProductionDiscardPile().add(nextId);
+        continue;
+      }
+
+      int holeIndex = state.getMarketCardIds().indexOf(null);
+      if (holeIndex >= 0) {
+        state.getMarketCardIds().set(holeIndex, nextId);
+      } else {
+        break;
+      }
+    }
   }
 
 
