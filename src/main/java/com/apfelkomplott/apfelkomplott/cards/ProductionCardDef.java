@@ -22,6 +22,11 @@ public class ProductionCardDef {
     private List<String> requires;
     private String image;
 
+    private List<MediaItem> media;
+
+    public List<MediaItem> getMedia() { return media; }
+    public void setMedia(List<MediaItem> media) { this.media = media; }
+
     public String getId() {
         return id;
     }

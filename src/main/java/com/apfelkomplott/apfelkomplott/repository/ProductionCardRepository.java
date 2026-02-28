@@ -19,7 +19,7 @@ public class ProductionCardRepository {
   private final List<ProductionCardDef> all;
 
   public ProductionCardRepository(ObjectMapper mapper) throws IOException {
-    var is = new ClassPathResource("cards/production_cards.json").getInputStream();
+    var is = new ClassPathResource("static/cards/production_cards.json").getInputStream();
     this.all = mapper.readValue(is, new TypeReference<List<ProductionCardDef>>() {});
     this.byId = all.stream().collect(Collectors.toMap(ProductionCardDef::getId, c -> c));
   }

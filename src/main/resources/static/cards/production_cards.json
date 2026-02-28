@@ -8,7 +8,7 @@
     "effects": [
       { "years": [1], "economy": 2, "environment": -1, "health": -1 }
     ],
-    "image": "/cards/st_fast_growth.png"
+    "media": []
   },
   {
     "id": "LT_WATER_MANAGEMENT",
@@ -25,9 +25,8 @@
       ]
     },
     "requires": [],
-    "image": "/cards/lt_water_mgmt.png"
+    "media": []
   },
-
 
   {
     "id": "ST_FAST_GROWTH_FERTILIZER",
@@ -39,7 +38,7 @@
       { "years": [1], "economy": 1, "environment": -2, "health": -1 }
     ],
     "requires": [],
-    "image": "/cards/st_fast_growth_fertilizer.png"
+    "media": []
   },
 
   {
@@ -52,7 +51,7 @@
       { "years": [1], "economy": 2, "environment": 0, "health": -1 }
     ],
     "requires": [],
-    "image": "/cards/st_fast_growth_fertilizer.png"
+    "media": []
   },
 
 
@@ -66,7 +65,7 @@
       { "years": [1], "economy": -1, "environment": 0, "health": 0 }
     ],
     "requires": [],
-    "image": "/cards/st_fast_growth_fertilizer.png"
+    "media": []
   },
 
   {
@@ -79,7 +78,7 @@
       { "years": [1], "economy": 1, "environment": -1, "health": 0 }
     ],
     "requires": [],
-    "image": "/cards/st_fast_growth_fertilizer.png"
+    "media": []
   },
 
   {
@@ -92,7 +91,7 @@
       { "years": [1], "economy": 1, "environment": -1, "health": 0 }
     ],
     "requires": [],
-    "image": "/cards/st_fast_growth_fertilizer.png"
+    "media": []
   },
 
   {
@@ -105,7 +104,63 @@
       { "years": [1], "economy": 1, "environment": -1, "health": -1 }
     ],
     "requires": [],
-    "image": "/cards/st_fast_growth_fertilizer.png"
+    "media": []
+  },
+
+
+  {
+    "id": "ST_OPTIMIZATION_OF_HARVESTING_TIME",
+    "name": "Production Company-10",
+    "deck": "SHORT_TERM",
+    "category": "Optimization of harvesting time for maximum maturity",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+
+  {
+    "id": "ST_SOCIAL_MEDIA",
+    "name": "Production Company-11",
+    "deck": "SHORT_TERM",
+    "category": "New distribution channels: online marketing media",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_SELF_PICKING",
+    "name": "Man Power-12",
+    "deck": "SHORT_TERM",
+    "category": "Setting up self-picking and adventure tours for customers",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_APPLE_BASED_PRODUCTS",
+    "name": "Production Company-13",
+    "deck": "SHORT_TERM",
+    "category": "Developing Apple based products such as cider or Apple sauce.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 1, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "qr", "src": "/cards/appleBasedProducts.png" }
+    ]
   }
 
 ]
