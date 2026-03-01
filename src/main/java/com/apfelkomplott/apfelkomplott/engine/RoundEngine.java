@@ -21,6 +21,8 @@ public class RoundEngine {
     private final EventCardDeck eventCardDeck;
     private final EventService eventService;
 
+    private final ProductionCardService productionCardService;
+
 
     public RoundEngine(
             SellService sellService,
@@ -28,7 +30,7 @@ public class RoundEngine {
             HarvestService harvestService,
             RotationService rotationService,
             ScoringService scoringService,
-            CardScoringService cardScoringService, EventCardDeck eventCardDeck, EventService eventService) {
+            CardScoringService cardScoringService, EventCardDeck eventCardDeck, EventService eventService, ProductionCardService productionCardService) {
 
         this.sellService = sellService;
         this.deliveryService = deliveryService;
@@ -38,6 +40,7 @@ public class RoundEngine {
         this.cardScoringService = cardScoringService;
         this.eventCardDeck = eventCardDeck;
         this.eventService = eventService;
+        this.productionCardService = productionCardService;
     }
 
     public void runNextPhase(GameState state) {
@@ -68,9 +71,11 @@ public class RoundEngine {
             }
 
 
+            case REFILL_CARDS -> {
+                productionCardService.refillMarketToFive(state);
+                state.setCurrentPhase(GamePhase.SELL);
+            }
 
-            case REFILL_CARDS ->
-                    state.setCurrentPhase(GamePhase.SELL);
 
             case SELL -> {
 
@@ -123,16 +128,12 @@ public class RoundEngine {
                 state.setCurrentPhase(GamePhase.INVEST);
             }
 
-
-
             case INVEST ->
                     state.setCurrentPhase(GamePhase.CARD_SCORING);
 
 
             case CARD_SCORING -> {
-
-                cardScoringService.applyCardScoring(state);
-
+               productionCardService.applyLongTermCardScoring(state);
                 state.setCurrentRound(state.getCurrentRound() + 1);
                 state.setCurrentPhase(GamePhase.MOVE_MARKER);
             }

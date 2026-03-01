@@ -1,6 +1,8 @@
 package com.apfelkomplott.apfelkomplott.entity;
 
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
+import com.apfelkomplott.apfelkomplott.cards.ActiveProductionCard;
+import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 
 import java.util.ArrayList;
@@ -16,13 +18,25 @@ public class GameState {
     private Plantation plantation;
     private ScoreResult lastScoreResult;
     private FarmingMode farmingMode;
-
     private EventCard lastDrawnEvent;
-
     private List<ProductionCard> activeProductionCards;
-
     private List<EventCard> eventDeck = new ArrayList<>();
     private List<EventCard> activeEvents = new ArrayList<>();
+    private List<String> marketCardIds = new ArrayList<>();
+    private List<ActiveProductionCard> activeLongTerm = new ArrayList<>();
+    private List<String> shortTermUsedThisRound = new ArrayList<>();
+    private List<String> productionDrawPile = new ArrayList<>();
+    private List<String> productionDiscardPile = new ArrayList<>();
+    private List<ProductionCardDef> market = new ArrayList<>();
+
+    public List<ProductionCardDef> getMarket() {
+        return market;
+    }
+
+    public void setMarket(List<ProductionCardDef> market) {
+        this.market = market;
+    }
+
 
     private boolean gameOver;
 
@@ -130,6 +144,54 @@ public class GameState {
 
     public void setLastDrawnEvent(EventCard lastDrawnEvent) {
         this.lastDrawnEvent = lastDrawnEvent;
+    }
+
+    public void setScoreTrack(ScoreTrack scoreTrack) {
+        this.scoreTrack = scoreTrack;
+    }
+
+    public void setActiveProductionCards(List<ProductionCard> activeProductionCards) {
+        this.activeProductionCards = activeProductionCards;
+    }
+
+    public List<String> getMarketCardIds() {
+        return marketCardIds;
+    }
+
+    public void setMarketCardIds(List<String> marketCardIds) {
+        this.marketCardIds = marketCardIds;
+    }
+
+    public List<ActiveProductionCard> getActiveLongTerm() {
+        return activeLongTerm;
+    }
+
+    public void setActiveLongTerm(List<ActiveProductionCard> activeLongTerm) {
+        this.activeLongTerm = activeLongTerm;
+    }
+
+    public List<String> getShortTermUsedThisRound() {
+        return shortTermUsedThisRound;
+    }
+
+    public void setShortTermUsedThisRound(List<String> shortTermUsedThisRound) {
+        this.shortTermUsedThisRound = shortTermUsedThisRound;
+    }
+
+    public List<String> getProductionDrawPile() {
+        return productionDrawPile;
+    }
+
+    public void setProductionDrawPile(List<String> productionDrawPile) {
+        this.productionDrawPile = productionDrawPile;
+    }
+
+    public List<String> getProductionDiscardPile() {
+        return productionDiscardPile;
+    }
+
+    public void setProductionDiscardPile(List<String> productionDiscardPile) {
+        this.productionDiscardPile = productionDiscardPile;
     }
 }
 

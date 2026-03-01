@@ -1,0 +1,237 @@
+[
+  {
+    "id": "ST_FAST_GROWTH",
+    "name": "Faster Growth -1",
+    "deck": "SHORT_TERM",
+    "category": "Soil",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 2, "environment": -1, "health": -1 }
+    ],
+    "media": []
+  },
+
+  {
+    "id": "ST_FAST_GROWTH_FERTILIZER",
+    "name": "Production Plan-2",
+    "deck": "SHORT_TERM",
+    "category": "Faster growth due to short-term increased fertilization. Accelerates growth, but has an impact on the health of the tree environment",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -2, "health": -1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_EARLY_HARVEST",
+    "name": "Production Plant -3",
+    "deck": "SHORT_TERM",
+    "category": "Other variety allows an early harvest: Can increase the harvest quantity, but affects the quality, allergy potential and the taste of the fruit",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": 2, "environment": 0, "health": -1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+
+  {
+    "id": "ST_PRICE_REDUCTION_SALES_REVENUE",
+    "name": "Production Plant-4",
+    "deck": "SHORT_TERM",
+    "category": "Price reduction:Increases sales but reduces revenue",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": -1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_MORE_INTENSIVE_IRRIGATION_REVENUE",
+    "name": "Irrigation-5",
+    "deck": "SHORT_TERM",
+    "category": "More Intensive irrigation:Short-term over irrigation can meet water requirements, but carries the risk of root damage and soil compensation",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -1, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_USE_HERBICIDES",
+    "name": "Plant Protection-6",
+    "deck": "SHORT_TERM",
+    "category": "One time use of herbicides as plant protection agents. The short-term use of herbicides can quickly suppress the weeds, but has long-term effects on soil health.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -1, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_REMOVAL_BENEFICIAL_INSECTS",
+    "name": "Plant Protection-7",
+    "deck": "SHORT_TERM",
+    "category": "Early removal of beneficial insects. The removal of insects that eat pests can solve term, but has a negative impact on the ecologicak balance",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -1, "health": -1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+  {
+    "id": "ST_FASTER_HARVESTING_METHOD",
+    "name": "Plant Protection-9",
+    "deck": "SHORT_TERM",
+    "category": "Faster harvesting methods: The use of faster harvesting methods can increase harvesting capacity in the short term, but can cause damage to the fruits",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 2, "environment": -1, "health": -1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+
+  {
+    "id": "ST_OPTIMIZATION_OF_HARVESTING_TIME",
+    "name": "Production Company-9",
+    "deck": "SHORT_TERM",
+    "category": "Optimization of harvesting time for maximum maturity",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+
+  {
+    "id": "ST_SOCIAL_MEDIA",
+    "name": "Production Company-10",
+    "deck": "SHORT_TERM",
+    "category": "New distribution channels: online marketing media",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_SELF_PICKING",
+    "name": "Man Power-11",
+    "deck": "SHORT_TERM",
+    "category": "Setting up self-picking and adventure tours for customers",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_APPLE_BASED_PRODUCTS",
+    "name": "Production Company-12",
+    "deck": "SHORT_TERM",
+    "category": "Developing Apple based products such as cider or Apple sauce.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 1, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "qr", "src": "/cards/appleBasedProducts.png" }
+    ]
+  },
+
+  {
+    "id": "ST_USE_SHADE_NETS",
+    "name": "Production Company-13",
+    "deck": "SHORT_TERM",
+    "category": "Use of shade nets in extreme weather conditions.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": 0, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+
+  {
+    "id": "ST_USE_FENCES_OR_DETERRENCE",
+    "name": "Plant protection-14",
+    "deck": "SHORT_TERM",
+    "category": "Protection against game damage by fences or deterrence methods.",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+  {
+    "id": "ST_TEMPORARY_EMPLOYMENT_AGENCIES",
+    "name": "Manpower-15",
+    "deck": "SHORT_TERM",
+    "category": "Cooperation with temporary employment agencies.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 0, "health": -1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "qr", "src": "/cards/temporaryEmploymentAgencies.png" }
+    ]
+  },
+  {
+    "id": "ST_CULTIVATION_OF_GREEN_FERTILIZER",
+    "name": "Production Company-16",
+    "deck": "SHORT_TERM",
+    "category": "Cultivation of green fertilizer plants for soil improvement.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": -1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": []
+  },
+  {
+    "id": "ST_TREE_PRUNING_TECHNIQUES",
+    "name": "Production Company-17",
+    "deck": "SHORT_TERM",
+    "category": "Improvement of tree pruning techniques.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 1, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  },
+  {
+    "id": "ST_REMOVAL_OF_DAMAGED_FRUIT",
+    "name": "Production Company-18",
+    "deck": "SHORT_TERM",
+    "category": "Early removal of damaged fruit. Also protects against pest infestation, eg: by wild animals that eat the tress",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": []
+  }
+
+]

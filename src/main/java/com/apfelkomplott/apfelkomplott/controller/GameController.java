@@ -1,19 +1,14 @@
 package com.apfelkomplott.apfelkomplott.controller;
 
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
+import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
+import com.apfelkomplott.apfelkomplott.controller.dto.BuyProductionRequest;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
-import com.apfelkomplott.apfelkomplott.controller.dto.ProductionCardPurchaseRequest;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
-import com.apfelkomplott.apfelkomplott.entity.EventCard;
-import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
-import com.apfelkomplott.apfelkomplott.entity.ProductionCardDefinition;
-import com.apfelkomplott.apfelkomplott.market.ProductionMarket;
 import com.apfelkomplott.apfelkomplott.service.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -24,9 +19,8 @@ public class GameController {
     private final GameInitializer gameInitializer;
     private final RoundEngine roundEngine;
     private final InvestmentService investmentService;
-    private final ProductionMarket productionMarket;
     private final GameStateService gameStateService;
-    private final ProductionCardPurchaseService purchaseService;
+    private final ProductionCardService productionCardService;
 
     private final EventService eventService;
 
@@ -34,16 +28,13 @@ public class GameController {
             GameInitializer gameInitializer,
             RoundEngine roundEngine,
             InvestmentService investmentService,
-            ProductionMarket productionMarket,
             GameStateService gameStateService,
-            ProductionCardPurchaseService purchaseService,
-            EventService eventService) {
+            ProductionCardService productionCardService, EventService eventService) {
         this.gameInitializer = gameInitializer;
         this.roundEngine = roundEngine;
         this.investmentService = investmentService;
-        this.productionMarket = productionMarket;
         this.gameStateService = gameStateService;
-        this.purchaseService = purchaseService;
+        this.productionCardService = productionCardService;
         this.eventService = eventService;
     }
 
@@ -58,26 +49,14 @@ public class GameController {
 */
 
     @PostMapping("/start")
-    public GameState startGame(@RequestParam FarmingMode mode) {
+    public GameState start(@RequestParam FarmingMode mode) {
+        GameState s = new GameState();
+        s.setFarmingMode(mode);
 
-        System.out.println("START ENDPOINT HIT");
-        System.out.println("Mode: " + mode);
+        productionCardService.initDeckAndMarket(s);
 
-        if (mode == null) {
-            System.out.println("MODE IS NULL");
-        }
-
-        GameState state = new GameState();
-        state.setFarmingMode(mode);
-
-        List<EventCard> deck = eventService.createEventDeck();
-        Collections.shuffle(deck);
-        state.setEventDeck(deck);
-
-        return gameStateService.createNewGame(state);
+        return gameStateService.createNewGame(s);
     }
-
-
 
 
     @PostMapping("/start-demo")
@@ -130,22 +109,10 @@ public class GameController {
     }
 
     @PostMapping("/invest/production")
-    public ResponseEntity<GameState> buyProductionCard(
-            @RequestBody ProductionCardPurchaseRequest request) {
-
+    public GameState buyProduction(@RequestBody BuyProductionRequest req) {
         GameState state = gameStateService.getState();
-        if (state == null) {
-            throw new IllegalStateException("Game not started");
-        }
-
-        if (state.getCurrentPhase() != GamePhase.INVEST) {
-            throw new IllegalStateException(
-                    "Production cards can only be bought during INVEST phase"
-            );
-        }
-
-        purchaseService.buyProductionCard(state, request.getCardName());
-        return ResponseEntity.ok(state);
+        productionCardService.buyCard(state, req.getCardId());
+        return gameStateService.updateState(state);
     }
 
 
@@ -153,8 +120,13 @@ public class GameController {
     // MARKET
     // ===============================
 
-    @GetMapping("/market")
-    public List<ProductionCardDefinition> getMarket() {
-        return productionMarket.getVisibleCards();
-    }
+ /*   @GetMapping("/market")
+    public List<ProductionCardDef> getMarket() {
+        return productionCardService.getVisibleCards();
+    }*/
+ @GetMapping("/market")
+ public List<ProductionCardDef> market() {
+     GameState state = gameStateService.getState();
+     return productionCardService.getMarketCards(state);
+ }
 }
