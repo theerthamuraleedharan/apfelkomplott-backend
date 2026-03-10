@@ -8,7 +8,7 @@
     "effects": [
       { "years": [1], "economy": 2, "environment": -1, "health": -1 }
     ],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -21,7 +21,7 @@
       { "years": [1], "economy": 1, "environment": -2, "health": -1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -34,7 +34,7 @@
       { "years": [1], "economy": 2, "environment": 0, "health": -1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
 
@@ -48,7 +48,7 @@
       { "years": [1], "economy": -1, "environment": 0, "health": 0 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -61,7 +61,7 @@
       { "years": [1], "economy": 1, "environment": -1, "health": 0 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -74,7 +74,7 @@
       { "years": [1], "economy": 1, "environment": -1, "health": 0 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -87,7 +87,7 @@
       { "years": [1], "economy": 1, "environment": -1, "health": -1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
   {
     "id": "ST_FASTER_HARVESTING_METHOD",
@@ -99,7 +99,7 @@
       { "years": [1], "economy": 2, "environment": -1, "health": -1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
 
@@ -113,7 +113,7 @@
       { "years": [1], "economy": 1, "environment": 1, "health": 1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
 
@@ -127,7 +127,7 @@
       { "years": [1], "economy": 1, "environment": 0, "health": 0 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -140,7 +140,7 @@
       { "years": [1], "economy": 1, "environment": -1, "health": 1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -168,7 +168,7 @@
       { "years": [1], "economy": 0, "environment": 1, "health": 1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
   {
@@ -181,7 +181,7 @@
       { "years": [1], "economy": 1, "environment": 1, "health": 1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
   {
     "id": "ST_TEMPORARY_EMPLOYMENT_AGENCIES",
@@ -194,7 +194,8 @@
     ],
     "requires": [],
     "media": [
-      { "type": "qr", "src": "/cards/temporaryEmploymentAgencies.png" }
+      { "type": "qr", "src": "/cards/temporaryEmploymentAgencies.png" },
+      { "type": "image", "src": "/cards/shortTermProductionCard.png" }
     ]
   },
   {
@@ -207,7 +208,7 @@
       { "years": [1], "economy": -1, "environment": 1, "health": 1 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
   {
     "id": "ST_TREE_PRUNING_TECHNIQUES",
@@ -231,7 +232,7 @@
       { "years": [1], "economy": 1, "environment": 0, "health": 0 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   }
 
 ]
