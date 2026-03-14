@@ -154,7 +154,8 @@
     ],
     "requires": [],
     "media": [
-      { "type": "qr", "src": "/cards/appleBasedProducts.png" }
+      { "type": "qr", "src": "/cards/appleBasedProducts.png" },
+      { "type": "image", "src": "/cards/shortTermProductionCard.png" }
     ]
   },
 
@@ -220,7 +221,7 @@
       { "years": [1], "economy": 1, "environment": 1, "health": 0 }
     ],
     "requires": [],
-    "media": []
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
   {
     "id": "ST_REMOVAL_OF_DAMAGED_FRUIT",
@@ -232,7 +233,95 @@
       { "years": [1], "economy": 1, "environment": 0, "health": 0 }
     ],
     "requires": [],
-    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
-  }
+    "media": [ { "type": "image", "src": "/cards/longTermProductionCard.png" }]
+  },
+  {
+    "id": "LT_WHOLESALE_CONTRACT",
+    "name": "Cultivation Areas",
+    "deck": "LONG_TERM",
+    "category": "Purchase agreement with wholesaler",
+    "cost": { "fixed": 25 },
+    "effects": [
+      { "years": [1, 3], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [ { "type": "image", "src": "/cards/longTermProductionCard.png" }]
+  },
+  {
+  "id": "LT_LOCAL_CIDER_MILL_CONTRACT",
+  "name": "Local Cider Mill Contract",
+  "deck": "LONG_TERM",
+  "category": "Purchase agreement with local cider mill",
+  "cost": { "fixed": 25 },
+  "effects": [
+    { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 },
+    { "years": [1], "economy": 0, "environment": 1, "health": 0 }
+  ],
+  "requires": [],
+  "media": [ { "type": "image", "src": "/cards/longTermProductionCard.png" }]
+ },
+  {
+    "id": "LT_PRODUCTION_COMPANY",
+    "name": "Produktionsbetrieb",
+    "deck": "LONG_TERM",
+    "category": "Production company",
+    "cost": { "fixed": 10 },
+    "effectsByMode": {
+      "ORGANIC": [
+        { "years": [1, 2], "economy": -1, "environment": 1, "health": 0 }
+      ],
+      "CONVENTIONAL": [
+        { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+      ]
+    },
+    "requires": [],
+    "ruleDisplay": {
+      "title": "Produktionsbetrieb",
+      "options": [
+        {
+          "heading": "Umstellung auf BIO",
+          "lines": ["Wirtschaft -", "Umwelt +", "im 1. und 2. Jahr"]
+        },
+        {
+          "heading": "Konventioneller Betrieb",
+          "lines": ["Wirtschaft +", "im 1. und 2. Jahr"]
+        }
+      ]
+    },
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
 
+  {
+    "id": "LT_PLANTATION_AREAS",
+    "name": "Production Company-19",
+    "deck": "LONG_TERM",
+    "category": "Choose a plantation layout.",
+    "cost": { "fixed": 20 },
+    "customRule": "PLANTATION_LAYOUT",
+    "maxFieldCapacity": 8,
+    "effects": [],
+    "requires": [],
+    "ruleDisplay": {
+      "title": "Plantation Areas",
+      "options": [
+        {
+          "heading": "Large plantations",
+          "lines": ["Economy ++", "Environment -", "in years 2 and 3"]
+        },
+        {
+          "heading": "Medium plantations",
+          "lines": ["Economy +", "in years 2 and 3"]
+        },
+        {
+          "heading": "Small plantations",
+          "lines": ["Economy -", "Environment +", "in years 2 and 3"]
+        }
+      ]
+    },
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  }
 ]

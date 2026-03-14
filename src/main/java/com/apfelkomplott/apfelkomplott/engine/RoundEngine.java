@@ -57,6 +57,7 @@ public class RoundEngine {
                 state.setCurrentPhase(GamePhase.DRAW_EVENT);
                 state.setLastSellResult(null);
                 state.setLastScoreResult(null);
+                state.setLastCardScoreResult(null);
 
             }
 
@@ -133,7 +134,7 @@ public class RoundEngine {
 
 
             case CARD_SCORING -> {
-               productionCardService.applyLongTermCardScoring(state);
+               state.setLastCardScoreResult(productionCardService.applyLongTermCardScoring(state));
                 state.setCurrentRound(state.getCurrentRound() + 1);
                 state.setCurrentPhase(GamePhase.MOVE_MARKER);
             }

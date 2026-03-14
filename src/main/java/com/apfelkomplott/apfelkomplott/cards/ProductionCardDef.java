@@ -16,16 +16,29 @@ public class ProductionCardDef {
 
     private CostDef cost;
 
-    private List<EffectDef> effects; // normal effects
-    private Map<FarmingMode, List<EffectDef>> effectsByMode; // optional
+    private List<EffectDef> effects;
+    private Map<FarmingMode, List<EffectDef>> effectsByMode;
 
     private List<String> requires;
     private String image;
 
     private List<MediaItem> media;
+    private Map<String, Object> ruleDisplay;
+
+    private String customRule;
+    private Integer maxFieldCapacity;
+
 
     public List<MediaItem> getMedia() { return media; }
     public void setMedia(List<MediaItem> media) { this.media = media; }
+
+    public Map<String, Object> getRuleDisplay() {
+        return ruleDisplay;
+    }
+
+    public void setRuleDisplay(Map<String, Object> ruleDisplay) {
+        this.ruleDisplay = ruleDisplay;
+    }
 
     public String getId() {
         return id;
@@ -97,5 +110,21 @@ public class ProductionCardDef {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getCustomRule() {
+        return customRule;
+    }
+
+    public void setCustomRule(String customRule) {
+        this.customRule = customRule;
+    }
+
+    public Integer getMaxFieldCapacity() {
+        return maxFieldCapacity;
+    }
+
+    public void setMaxFieldCapacity(Integer maxFieldCapacity) {
+        this.maxFieldCapacity = maxFieldCapacity;
     }
 }

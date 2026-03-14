@@ -2,6 +2,7 @@ package com.apfelkomplott.apfelkomplott.controller;
 
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
+import com.apfelkomplott.apfelkomplott.controller.dto.ActiveLongTermCardView;
 import com.apfelkomplott.apfelkomplott.controller.dto.BuyProductionRequest;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
@@ -111,7 +112,7 @@ public class GameController {
     @PostMapping("/invest/production")
     public GameState buyProduction(@RequestBody BuyProductionRequest req) {
         GameState state = gameStateService.getState();
-        productionCardService.buyCard(state, req.getCardId());
+        productionCardService.buyCard(state, req);
         return gameStateService.updateState(state);
     }
 
@@ -129,4 +130,10 @@ public class GameController {
      GameState state = gameStateService.getState();
      return productionCardService.getMarketCards(state);
  }
+
+    @GetMapping("/active-long-term")
+    public List<ActiveLongTermCardView> getActiveLongTerm() {
+        GameState state = gameStateService.getState();
+        return productionCardService.getActiveLongTermView(state);
+    }
 }

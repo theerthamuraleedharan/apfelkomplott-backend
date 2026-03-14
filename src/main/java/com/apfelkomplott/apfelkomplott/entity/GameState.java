@@ -17,6 +17,7 @@ public class GameState {
     private ScoreTrack scoreTrack;
     private Plantation plantation;
     private ScoreResult lastScoreResult;
+    private ScoreResult lastCardScoreResult;
     private FarmingMode farmingMode;
     private EventCard lastDrawnEvent;
     private List<ProductionCard> activeProductionCards;
@@ -43,7 +44,7 @@ public class GameState {
     public GameState() {
         this.currentRound = 1;
         this.currentPhase = GamePhase.MOVE_MARKER;
-        this.money = 30;
+        this.money = 50;
 
         this.scoreTrack = new ScoreTrack();
         this.plantation = new Plantation();
@@ -112,6 +113,14 @@ public class GameState {
 
     public void setLastScoreResult(ScoreResult lastScoreResult) {
         this.lastScoreResult = lastScoreResult;
+    }
+
+    public ScoreResult getLastCardScoreResult() {
+        return lastCardScoreResult;
+    }
+
+    public void setLastCardScoreResult(ScoreResult lastCardScoreResult) {
+        this.lastCardScoreResult = lastCardScoreResult;
     }
 
     public FarmingMode getFarmingMode() {
