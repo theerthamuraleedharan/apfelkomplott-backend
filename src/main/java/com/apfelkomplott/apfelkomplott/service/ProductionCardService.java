@@ -16,6 +16,8 @@ import java.util.*;
 
 @Service
 public class ProductionCardService {
+  // Special long-term card that converts the farm from conventional to organic.
+  private static final String PRODUCTION_METHOD_CARD_ID = "LT_PRODUCTION_METHOD";
 
   private final ProductionCardRepository repo;
   private final Random random = new Random();
@@ -75,7 +77,7 @@ public class ProductionCardService {
     ScoreResult result = new ScoreResult(0, 0, 0);
 
     if (card.getDeck() == CardDeck.LONG_TERM) {
-        // store only, do NOT show explanation now
+        // Long-term cards are stored and scored in later rounds instead of on purchase.
         state.getActiveLongTerm().add(
                 new ActiveProductionCard(
                         cardId,
@@ -83,6 +85,12 @@ public class ProductionCardService {
                         plantationSizeAtPurchase
                 )
         );
+
+        // Buying the production-method card immediately updates the farm mode so
+        // future scoring uses the organic branch of its effects.
+        if (PRODUCTION_METHOD_CARD_ID.equals(cardId)) {
+            state.setFarmingMode(FarmingMode.ORGANIC);
+        }
     } else {
         // Short-term cards still apply immediately, but buying them should not
         // open a scoring popup. Apply the score change silently.
@@ -127,33 +135,23 @@ public class ProductionCardService {
     return state.getPlantation().getTrees().size();
   }
 
-  private List<EffectDef> resolveEffects(ProductionCardDef card, FarmingMode mode, PlantationSize plantationSize) {
-
-    // 1️⃣ plantation size cards
+  private List<EffectDef> resolveEffects(
+        ProductionCardDef card,
+        FarmingMode mode,
+        PlantationSize plantationSize
+) {
     if (card.getEffectsByPlantationSize() != null && plantationSize != null) {
-
-      List<EffectDef> bySize =
-              card.getEffectsByPlantationSize().get(plantationSize);
-
-      if (bySize != null) {
-        return bySize;
-      }
+        List<EffectDef> bySize = card.getEffectsByPlantationSize().get(plantationSize);
+        if (bySize != null) return bySize;
     }
 
-    // 2️⃣ farming mode cards
     if (card.getEffectsByMode() != null && mode != null) {
-
-      List<EffectDef> byMode =
-              card.getEffectsByMode().get(mode);
-
-      if (byMode != null) {
-        return byMode;
-      }
+        List<EffectDef> byMode = card.getEffectsByMode().get(mode);
+        if (byMode != null) return byMode;
     }
 
-    // 3️⃣ default cards
     return card.getEffects();
-  }
+}
 
   private void applyEffectsForYear(
         GameState state,
@@ -250,40 +248,127 @@ System.out.println("default effects = " + card.getEffects());
   }
 
   public void refillMarketToFive(GameState state) {
+    boolean freshMarket = state.getMarketCardIds().stream().allMatch(Objects::isNull);
+
     while (state.getMarketCardIds().size() < 5) {
       state.getMarketCardIds().add(null);
     }
 
+    int shortTermCount = countMarketCardsByDeck(state, CardDeck.SHORT_TERM);
+    int longTermCount = countMarketCardsByDeck(state, CardDeck.LONG_TERM);
+
+    while (shortTermCount < 3 && state.getMarketCardIds().contains(null)) {
+      String nextId = drawNextCardForDeck(state, CardDeck.SHORT_TERM);
+      if (nextId == null) break;
+      putCardIntoNextMarketHole(state, nextId);
+      shortTermCount++;
+    }
+
+    while (longTermCount < 2 && state.getMarketCardIds().contains(null)) {
+      String nextId = drawNextCardForDeck(state, CardDeck.LONG_TERM);
+      if (nextId == null) break;
+      putCardIntoNextMarketHole(state, nextId);
+      longTermCount++;
+    }
+
     while (state.getMarketCardIds().contains(null)) {
+      String nextId = drawNextAvailableCard(state);
+      if (nextId == null) break;
+      putCardIntoNextMarketHole(state, nextId);
+    }
 
-      if (state.getProductionDrawPile().isEmpty()) {
-        if (state.getProductionDiscardPile().isEmpty()) break;
-        Collections.shuffle(state.getProductionDiscardPile(), random);
-        state.getProductionDrawPile().addAll(state.getProductionDiscardPile());
-        state.getProductionDiscardPile().clear();
+    if (freshMarket) {
+      Collections.shuffle(state.getMarketCardIds(), random);
+    }
+  }
+
+  private int countMarketCardsByDeck(GameState state, CardDeck deck) {
+    return (int) state.getMarketCardIds().stream()
+            .filter(Objects::nonNull)
+            .map(repo::getById)
+            .filter(card -> card.getDeck() == deck)
+            .count();
+  }
+
+  private void putCardIntoNextMarketHole(GameState state, String cardId) {
+    int holeIndex = state.getMarketCardIds().indexOf(null);
+    if (holeIndex >= 0) {
+      state.getMarketCardIds().set(holeIndex, cardId);
+    }
+  }
+
+  private String drawNextCardForDeck(GameState state, CardDeck deck) {
+    while (true) {
+      int index = findNextCardIndex(state, deck);
+      if (index >= 0) {
+        return state.getProductionDrawPile().remove(index);
       }
 
-      if (state.getProductionDrawPile().isEmpty()) break;
+      discardUnavailableDrawPileCards(state);
+      if (!reloadDrawPile(state)) {
+        return null;
+      }
+    }
+  }
 
-      String nextId = state.getProductionDrawPile().remove(0);
-
-      boolean alreadyInMarket = state.getMarketCardIds().stream()
-              .filter(Objects::nonNull)
-              .anyMatch(id -> id.equals(nextId));
-
-      boolean alreadyActive = state.getActiveLongTerm().stream()
-              .anyMatch(a -> nextId.equals(a.getCardId()));
-
-      if (alreadyInMarket || alreadyActive) {
-        state.getProductionDiscardPile().add(nextId);
-        continue;
+  private String drawNextAvailableCard(GameState state) {
+    while (true) {
+      for (int i = 0; i < state.getProductionDrawPile().size(); i++) {
+        String cardId = state.getProductionDrawPile().get(i);
+        if (!isUnavailableForMarket(state, cardId)) {
+          return state.getProductionDrawPile().remove(i);
+        }
       }
 
-      int holeIndex = state.getMarketCardIds().indexOf(null);
-      if (holeIndex >= 0) {
-        state.getMarketCardIds().set(holeIndex, nextId);
-      } else {
-        break;
+      discardUnavailableDrawPileCards(state);
+      if (!reloadDrawPile(state)) {
+        return null;
+      }
+    }
+  }
+
+  private int findNextCardIndex(GameState state, CardDeck deck) {
+    for (int i = 0; i < state.getProductionDrawPile().size(); i++) {
+      String cardId = state.getProductionDrawPile().get(i);
+      ProductionCardDef card = repo.getById(cardId);
+
+      if (card.getDeck() == deck && !isUnavailableForMarket(state, cardId)) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  private boolean isUnavailableForMarket(GameState state, String cardId) {
+    boolean alreadyInMarket = state.getMarketCardIds().stream()
+            .filter(Objects::nonNull)
+            .anyMatch(id -> id.equals(cardId));
+
+    boolean alreadyActive = state.getActiveLongTerm().stream()
+            .anyMatch(a -> cardId.equals(a.getCardId()));
+
+    return alreadyInMarket || alreadyActive;
+  }
+
+  private boolean reloadDrawPile(GameState state) {
+    if (state.getProductionDiscardPile().isEmpty()) {
+      return false;
+    }
+
+    Collections.shuffle(state.getProductionDiscardPile(), random);
+    state.getProductionDrawPile().addAll(state.getProductionDiscardPile());
+    state.getProductionDiscardPile().clear();
+    return true;
+  }
+
+  private void discardUnavailableDrawPileCards(GameState state) {
+    Iterator<String> iterator = state.getProductionDrawPile().iterator();
+    while (iterator.hasNext()) {
+      String cardId = iterator.next();
+      if (isUnavailableForMarket(state, cardId)) {
+        state.getProductionDiscardPile().add(cardId);
+        iterator.remove();
       }
     }
   }

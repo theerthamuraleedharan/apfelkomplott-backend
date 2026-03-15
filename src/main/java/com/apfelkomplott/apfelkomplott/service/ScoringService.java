@@ -29,6 +29,7 @@ public class ScoringService {
         int wastePenalty = (int) (wasted / 3);
         if (wastePenalty > 0) {
             economyChange -= wastePenalty;
+            result.addReason("-" + wastePenalty + " Economy (Wasted apples)");
         }
 
         plantation.getApples().removeIf(
@@ -45,6 +46,7 @@ public class ScoringService {
 
             if (count == 0) {
                 economyChange -= 1;
+                result.addReason("-1 Economy (Empty transport crate)");
             }
         }
 
@@ -58,6 +60,7 @@ public class ScoringService {
 
             if (count == 0) {
                 economyChange -= 1;
+                result.addReason("-1 Economy (Empty sales stand)");
             }
         }
 
@@ -79,6 +82,7 @@ public class ScoringService {
                 && !plantation.getSalesStands().isEmpty()) {
 
             economyChange += 1;
+            result.addReason("+1 Economy (Perfect balance bonus)");
         }
 
         // Set totals in result

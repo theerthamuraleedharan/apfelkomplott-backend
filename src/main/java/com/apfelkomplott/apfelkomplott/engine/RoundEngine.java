@@ -137,10 +137,12 @@ public class RoundEngine {
 
                 if (state.getProductionCardFinalScoreResult() == null) {
                     ScoreResult result = productionCardService.applyLongTermCardScoring(state);
-                    state.setProductionCardFinalScoreResult(result);
+                    if (hasVisibleScoreChange(result)) {
+                        state.setProductionCardFinalScoreResult(result);
 
-                    // stop here so UI can show popup
-                    return;
+                        // Stop only when there is something meaningful to show in the popup.
+                        return;
+                    }
                 }
 
                 // already scored and popup shown -> now move forward
@@ -150,5 +152,13 @@ public class RoundEngine {
             }
 
         }
+    }
+
+    private boolean hasVisibleScoreChange(ScoreResult result) {
+        return result != null
+                && (result.getEconomyChange() != 0
+                || result.getEnvironmentChange() != 0
+                || result.getHealthChange() != 0
+                || !result.getReasons().isEmpty());
     }
 }

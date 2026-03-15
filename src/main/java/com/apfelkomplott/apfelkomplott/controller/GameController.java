@@ -145,7 +145,9 @@ public class GameController {
     public ScoreResult buyCard(@RequestParam String cardId) {
         // Purchase a card by id and return the resulting score update payload.
         GameState state = gameStateService.getState();
-        return productionCardService.buyCard(state, cardId);
+        ScoreResult result = productionCardService.buyCard(state, cardId);
+        gameStateService.updateState(state);
+        return result;
     }
 
     @PostMapping("/card-scoring")
