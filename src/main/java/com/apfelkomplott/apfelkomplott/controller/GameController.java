@@ -6,6 +6,7 @@ import com.apfelkomplott.apfelkomplott.controller.dto.BuyProductionRequest;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
+import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.service.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/game")
 public class GameController {
 
+    // Core services used to create, progress, and update the current game session.
     private final GameInitializer gameInitializer;
     private final RoundEngine roundEngine;
     private final InvestmentService investmentService;
@@ -50,9 +52,11 @@ public class GameController {
 
     @PostMapping("/start")
     public GameState start(@RequestParam FarmingMode mode) {
+        // Create a fresh game state with the selected farming mode before persisting it.
         GameState s = new GameState();
         s.setFarmingMode(mode);
 
+        // Prepare the production deck and initial market for the new game.
         productionCardService.initDeckAndMarket(s);
 
         return gameStateService.createNewGame(s);
@@ -61,12 +65,14 @@ public class GameController {
 
     @PostMapping("/start-demo")
     public GameState startDemoGame() {
+        // Seed the game with demo data for quicker manual testing.
         GameState state = gameInitializer.createDemoGame();
         return gameStateService.createNewGame(state);
     }
 
     @GetMapping("/state")
     public GameState getState() {
+        // Expose the current saved game state to the frontend.
         GameState state = gameStateService.getState();
         if (state == null) {
             throw new IllegalStateException("Game not started");
@@ -79,10 +85,12 @@ public class GameController {
 
         GameState state = gameStateService.getState();
 
+        // If there is no active game or the game already ended, do not advance anything.
         if (state == null || state.isGameOver()) {
             return state;
         }
 
+        // Delegate phase progression to the round engine, then persist the updated state.
         roundEngine.runNextPhase(state);
         return gameStateService.updateState(state);
     }
@@ -104,6 +112,7 @@ public class GameController {
             return state;
         }
 
+        // Apply the chosen investment action to the active game.
         investmentService.invest(state, request.getInvestmentType());
         return gameStateService.updateState(state);
     }
@@ -111,6 +120,7 @@ public class GameController {
     @PostMapping("/invest/production")
     public GameState buyProduction(@RequestBody BuyProductionRequest req) {
         GameState state = gameStateService.getState();
+        // Buy a production card from the current market, then store the updated game state.
         productionCardService.buyCard(state, req.getCardId());
         return gameStateService.updateState(state);
     }
@@ -126,7 +136,21 @@ public class GameController {
     }*/
  @GetMapping("/market")
  public List<ProductionCardDef> market() {
+     // Return the currently visible production cards for the active game.
      GameState state = gameStateService.getState();
      return productionCardService.getMarketCards(state);
  }
+
+    @PostMapping("/buy-card")
+    public ScoreResult buyCard(@RequestParam String cardId) {
+        // Purchase a card by id and return the resulting score update payload.
+        GameState state = gameStateService.getState();
+        return productionCardService.buyCard(state, cardId);
+    }
+
+    @PostMapping("/card-scoring")
+    public ScoreResult applyCardScoring() {
+        GameState state = gameStateService.getState();
+        return productionCardService.applyLongTermCardScoring(state);
+    }
 }

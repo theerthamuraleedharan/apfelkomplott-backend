@@ -12,9 +12,10 @@ public class EffectDef {
     private int environment;
     private int health;
 
-    public boolean appliesInYear(int year) {
-        return years != null && years.contains(year);
+   public boolean appliesInYear(int year) {
+    return years != null && years.contains(year);
     }
+
 
     public List<Integer> getYears() {
         return years;

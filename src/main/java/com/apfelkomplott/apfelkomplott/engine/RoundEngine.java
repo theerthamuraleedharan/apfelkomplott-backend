@@ -17,8 +17,6 @@ public class RoundEngine {
     private final HarvestService harvestService;
     private final RotationService rotationService;
     private final ScoringService scoringService;
-    private final CardScoringService cardScoringService;
-    private final EventCardDeck eventCardDeck;
     private final EventService eventService;
 
     private final ProductionCardService productionCardService;
@@ -30,15 +28,13 @@ public class RoundEngine {
             HarvestService harvestService,
             RotationService rotationService,
             ScoringService scoringService,
-            CardScoringService cardScoringService, EventCardDeck eventCardDeck, EventService eventService, ProductionCardService productionCardService) {
+            EventCardDeck eventCardDeck, EventService eventService, ProductionCardService productionCardService) {
 
         this.sellService = sellService;
         this.deliveryService = deliveryService;
         this.harvestService = harvestService;
         this.rotationService = rotationService;
         this.scoringService = scoringService;
-        this.cardScoringService = cardScoringService;
-        this.eventCardDeck = eventCardDeck;
         this.eventService = eventService;
         this.productionCardService = productionCardService;
     }
@@ -57,6 +53,7 @@ public class RoundEngine {
                 state.setCurrentPhase(GamePhase.DRAW_EVENT);
                 state.setLastSellResult(null);
                 state.setLastScoreResult(null);
+                state.setProductionCardFinalScoreResult(null);
 
             }
 
@@ -125,18 +122,33 @@ public class RoundEngine {
                 }
 
                 // If already calculated → move forward
+                state.setLastScoreResult(null);
                 state.setCurrentPhase(GamePhase.INVEST);
             }
 
-            case INVEST ->
+            case INVEST ->{
+                    state.setProductionCardFinalScoreResult(null);
                     state.setCurrentPhase(GamePhase.CARD_SCORING);
+            }
+
 
 
             case CARD_SCORING -> {
-               productionCardService.applyLongTermCardScoring(state);
+
+                if (state.getProductionCardFinalScoreResult() == null) {
+                    ScoreResult result = productionCardService.applyLongTermCardScoring(state);
+                    state.setProductionCardFinalScoreResult(result);
+
+                    // stop here so UI can show popup
+                    return;
+                }
+
+                // already scored and popup shown -> now move forward
+                state.setProductionCardFinalScoreResult(null);
                 state.setCurrentRound(state.getCurrentRound() + 1);
                 state.setCurrentPhase(GamePhase.MOVE_MARKER);
             }
+
         }
     }
 }

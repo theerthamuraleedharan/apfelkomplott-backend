@@ -2,6 +2,7 @@ package com.apfelkomplott.apfelkomplott.cards;
 
 import com.apfelkomplott.apfelkomplott.Enum.CardDeck;
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
+import com.apfelkomplott.apfelkomplott.Enum.PlantationSize;
 import lombok.Data;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,13 @@ public class ProductionCardDef {
     private String image;
 
     private List<MediaItem> media;
+    
+    private Map<PlantationSize, List<EffectDef>> effectsByPlantationSize;
+
+
+    public void setEffectsByPlantationSize(Map<PlantationSize, List<EffectDef>> effectsByPlantationSize) {
+        this.effectsByPlantationSize = effectsByPlantationSize;
+    }
 
     public List<MediaItem> getMedia() { return media; }
     public void setMedia(List<MediaItem> media) { this.media = media; }
@@ -97,5 +105,9 @@ public class ProductionCardDef {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Map<PlantationSize, List<EffectDef>> getEffectsByPlantationSize() {
+        return effectsByPlantationSize;
     }
 }

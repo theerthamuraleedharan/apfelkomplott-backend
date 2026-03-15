@@ -2,10 +2,12 @@ package com.apfelkomplott.apfelkomplott.service;
 
 import com.apfelkomplott.apfelkomplott.Enum.CardDeck;
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
+import com.apfelkomplott.apfelkomplott.Enum.PlantationSize;
 import com.apfelkomplott.apfelkomplott.cards.ActiveProductionCard;
 import com.apfelkomplott.apfelkomplott.cards.EffectDef;
 import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
+import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.entity.ScoreTrack;
 import com.apfelkomplott.apfelkomplott.repository.ProductionCardRepository;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,6 @@ public class ProductionCardService {
     this.repo = repo;
   }
 
-  /** Call once at new game start */
   public void initDeckAndMarket(GameState state) {
     if (!state.getProductionDrawPile().isEmpty()) return;
 
@@ -36,111 +37,203 @@ public class ProductionCardService {
     refreshMarketView(state);
   }
 
-  /** Buy: remove immediately, apply Year-1 immediately, store if long-term */
-  public void buyCard(GameState state, String cardId) {
+  public ScoreResult buyCard(GameState state, String cardId) {
 
     if (!state.getMarketCardIds().contains(cardId)) {
-      throw new IllegalStateException("Card is not in market row.");
+        throw new IllegalStateException("Card is not in market row.");
     }
 
     ProductionCardDef card = repo.getById(cardId);
 
-    // prerequisites
-    List<String> requires = (card.getRequires() == null) ? Collections.emptyList() : card.getRequires();
+    List<String> requires = (card.getRequires() == null)
+            ? Collections.emptyList()
+            : card.getRequires();
+
     for (String req : requires) {
-      boolean hasReq = state.getActiveLongTerm().stream()
-              .anyMatch(a -> req.equals(a.getCardId()));
-      if (!hasReq) throw new IllegalStateException("Missing prerequisite: " + req);
+        boolean hasReq = state.getActiveLongTerm().stream()
+                .anyMatch(a -> req.equals(a.getCardId()));
+        if (!hasReq) throw new IllegalStateException("Missing prerequisite: " + req);
     }
 
-    // cost
     int cost = resolveCost(card, state.getFarmingMode());
-    if (state.getMoney() < cost) throw new IllegalStateException("Not enough money.");
+    if (state.getMoney() < cost) {
+        throw new IllegalStateException("Not enough money.");
+    }
 
-    // pay
     state.setMoney(state.getMoney() - cost);
 
-    // ✅ DO NOT REMOVE. Keep the same slot empty until Step 3.
     int idx = state.getMarketCardIds().indexOf(cardId);
     if (idx >= 0) {
-      state.getMarketCardIds().set(idx, null);
+        state.getMarketCardIds().set(idx, null);
     }
 
-    // apply Year 1 now
-    applyEffectsForYear(state, card, 1);
+    PlantationSize plantationSizeAtPurchase = null;
+    if (usesPlantationSize(card)) {
+        plantationSizeAtPurchase = resolvePlantationSize(state);
+    }
 
-    // store
+    ScoreResult result = new ScoreResult(0, 0, 0);
+
     if (card.getDeck() == CardDeck.LONG_TERM) {
-      state.getActiveLongTerm().add(new ActiveProductionCard(cardId, state.getCurrentRound()));
+        // store only, do NOT show explanation now
+        state.getActiveLongTerm().add(
+                new ActiveProductionCard(
+                        cardId,
+                        state.getCurrentRound(),
+                        plantationSizeAtPurchase
+                )
+        );
     } else {
-      state.getProductionDiscardPile().add(cardId);
-      state.getShortTermUsedThisRound().add(cardId);
+        // Short-term cards still apply immediately, but buying them should not
+        // open a scoring popup. Apply the score change silently.
+        applyEffectsForYear(state, card, 1, plantationSizeAtPurchase, null);
+
+        state.getProductionDiscardPile().add(cardId);
+        state.getShortTermUsedThisRound().add(cardId);
     }
 
     if (state.getScoreTrack().isGameOver()) {
-      state.setGameOver(true);
+        state.setGameOver(true);
     }
-  }
+
+    return result;
+}
+
   private int resolveCost(ProductionCardDef card, FarmingMode mode) {
     if (card.getCost() == null) return 0;
     return card.getCost().resolve(mode);
   }
 
-  private List<EffectDef> resolveEffects(ProductionCardDef card, FarmingMode mode) {
-    if (card.getEffectsByMode() != null && mode != null) {
-      List<EffectDef> byMode = card.getEffectsByMode().get(mode);
-      if (byMode != null) return byMode;
+  private boolean usesPlantationSize(ProductionCardDef card) {
+    return card.getEffectsByPlantationSize() != null && !card.getEffectsByPlantationSize().isEmpty();
+  }
+
+  private PlantationSize resolvePlantationSize(GameState state) {
+
+    int treeCount = getTreeCount(state);
+
+    if (treeCount <= 16) {
+      return PlantationSize.SMALL;
     }
+
+    if (treeCount <= 32) {
+      return PlantationSize.MEDIUM;
+    }
+
+    return PlantationSize.LARGE;
+  }
+
+  private int getTreeCount(GameState state) {
+    return state.getPlantation().getTrees().size();
+  }
+
+  private List<EffectDef> resolveEffects(ProductionCardDef card, FarmingMode mode, PlantationSize plantationSize) {
+
+    // 1️⃣ plantation size cards
+    if (card.getEffectsByPlantationSize() != null && plantationSize != null) {
+
+      List<EffectDef> bySize =
+              card.getEffectsByPlantationSize().get(plantationSize);
+
+      if (bySize != null) {
+        return bySize;
+      }
+    }
+
+    // 2️⃣ farming mode cards
+    if (card.getEffectsByMode() != null && mode != null) {
+
+      List<EffectDef> byMode =
+              card.getEffectsByMode().get(mode);
+
+      if (byMode != null) {
+        return byMode;
+      }
+    }
+
+    // 3️⃣ default cards
     return card.getEffects();
   }
 
-  private void applyEffectsForYear(GameState state, ProductionCardDef card, int year) {
-    List<EffectDef> effects = resolveEffects(card, state.getFarmingMode());
+  private void applyEffectsForYear(
+        GameState state,
+        ProductionCardDef card,
+        int year,
+        PlantationSize plantationSize,
+        ScoreResult result
+) {
+    List<EffectDef> effects = resolveEffects(card, state.getFarmingMode(), plantationSize);
     if (effects == null) return;
 
     ScoreTrack score = state.getScoreTrack();
 
     for (EffectDef e : effects) {
-      if (e.appliesInYear(year)) {
-        score.setEconomy(score.getEconomy() + e.getEconomy());
-        score.setEnvironment(score.getEnvironment() + e.getEnvironment());
-        score.setHealth(score.getHealth() + e.getHealth());
-      }
-    }
-  }
+        if (e.appliesInYear(year)) {
 
-  public void applyLongTermCardScoring(GameState state) {
+            score.setEconomy(score.getEconomy() + e.getEconomy());
+            score.setEnvironment(score.getEnvironment() + e.getEnvironment());
+            score.setHealth(score.getHealth() + e.getHealth());
+
+           if (result != null) {
+              result.setEconomyChange(result.getEconomyChange() + e.getEconomy());
+              result.setEnvironmentChange(result.getEnvironmentChange() + e.getEnvironment());
+              result.setHealthChange(result.getHealthChange() + e.getHealth());
+
+              if (e.getEconomy() != 0) {
+                  result.addReason(formatReason(card, plantationSize, year, e.getEconomy(), "Economy"));
+              }
+              if (e.getEnvironment() != 0) {
+                  result.addReason(formatReason(card, plantationSize, year, e.getEnvironment(), "Environment"));
+              }
+              if (e.getHealth() != 0) {
+                  result.addReason(formatReason(card, plantationSize, year, e.getHealth(), "Health"));
+              }
+           }
+        }
+    }
+}
+
+  public ScoreResult applyLongTermCardScoring(GameState state) {
+
     int round = state.getCurrentRound();
+    ScoreResult result = new ScoreResult(0, 0, 0);
 
     for (ActiveProductionCard active : state.getActiveLongTerm()) {
+
       ProductionCardDef card = repo.getById(active.getCardId());
 
-      // buy round = Year 1 (already applied immediately in buyCard)
       int year = round - active.getPurchasedRound() + 1;
+
       if (year <= 1) continue;
 
-      List<EffectDef> effects = resolveEffects(card, state.getFarmingMode());
-      if (effects == null) continue;
+      System.out.println("Card: " + card.getName()
+        + ", purchasedRound=" + active.getPurchasedRound()
+        + ", currentRound=" + round
+        + ", year=" + year
+        + ", plantationSizeAtPurchase=" + active.getPlantationSizeAtPurchase());
 
-      for (EffectDef e : effects) {
-        if (e.appliesInYear(year)) {
-          state.getScoreTrack().setEconomy(
-                  state.getScoreTrack().getEconomy() + e.getEconomy()
-          );
-          state.getScoreTrack().setEnvironment(
-                  state.getScoreTrack().getEnvironment() + e.getEnvironment()
-          );
-          state.getScoreTrack().setHealth(
-                  state.getScoreTrack().getHealth() + e.getHealth()
-          );
-        }
-      }
+System.out.println("effectsByPlantationSize = " + card.getEffectsByPlantationSize());
+System.out.println("default effects = " + card.getEffects());
+
+
+      applyEffectsForYear(
+              state,
+              card,
+              year,
+              active.getPlantationSizeAtPurchase(),
+              result
+      );
+      System.out.println("Card: " + card.getName() + ", purchasedRound=" 
+    + active.getPurchasedRound() + ", currentRound=" + round + ", year=" + year);
     }
 
     if (state.getScoreTrack().isGameOver()) {
-      state.setGameOver(true);
+        state.setGameOver(true);
     }
-  }
+    
+
+    return result;
+}
 
   public void refreshMarketView(GameState state) {
     state.setMarket(
@@ -157,12 +250,10 @@ public class ProductionCardService {
   }
 
   public void refillMarketToFive(GameState state) {
-    // Ensure the market always has 5 slots (may contain null holes)
     while (state.getMarketCardIds().size() < 5) {
       state.getMarketCardIds().add(null);
     }
 
-    // Fill holes one-by-one
     while (state.getMarketCardIds().contains(null)) {
 
       if (state.getProductionDrawPile().isEmpty()) {
@@ -176,7 +267,6 @@ public class ProductionCardService {
 
       String nextId = state.getProductionDrawPile().remove(0);
 
-      // avoid duplicates in row or already-active long-term
       boolean alreadyInMarket = state.getMarketCardIds().stream()
               .filter(Objects::nonNull)
               .anyMatch(id -> id.equals(nextId));
@@ -198,5 +288,21 @@ public class ProductionCardService {
     }
   }
 
+  private String formatReason(
+        ProductionCardDef card,
+        PlantationSize size,
+        int year,
+        int value,
+        String stat
+    ) {
+        String sign = value > 0 ? "+" : "";
+        String sizeText = "";
 
+        if (size != null) {
+            sizeText = " - " + size.name().toLowerCase() + " plantation";
+        }
+
+        return sign + value + " " + stat +
+                " (" + card.getName() + sizeText + " - Year " + year + ")";
+    }
 }
