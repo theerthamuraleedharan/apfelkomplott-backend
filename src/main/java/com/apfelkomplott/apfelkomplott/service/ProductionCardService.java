@@ -192,27 +192,17 @@ public class ProductionCardService {
 }
 
   public ScoreResult applyLongTermCardScoring(GameState state) {
-
+    pruneExpiredActiveCards(state);
     int round = state.getCurrentRound();
     ScoreResult result = new ScoreResult(0, 0, 0);
 
-    for (ActiveProductionCard active : state.getActiveLongTerm()) {
+    for (ActiveProductionCard active : new ArrayList<>(state.getActiveLongTerm())) {
 
       ProductionCardDef card = repo.getById(active.getCardId());
 
       int year = round - active.getPurchasedRound() + 1;
 
-      if (year <= 1) continue;
-
-      System.out.println("Card: " + card.getName()
-        + ", purchasedRound=" + active.getPurchasedRound()
-        + ", currentRound=" + round
-        + ", year=" + year
-        + ", plantationSizeAtPurchase=" + active.getPlantationSizeAtPurchase());
-
-System.out.println("effectsByPlantationSize = " + card.getEffectsByPlantationSize());
-System.out.println("default effects = " + card.getEffects());
-
+      if (year <= 0) continue;
 
       applyEffectsForYear(
               state,
@@ -221,9 +211,9 @@ System.out.println("default effects = " + card.getEffects());
               active.getPlantationSizeAtPurchase(),
               result
       );
-      System.out.println("Card: " + card.getName() + ", purchasedRound=" 
-    + active.getPurchasedRound() + ", currentRound=" + round + ", year=" + year);
     }
+
+    pruneExpiredActiveCards(state);
 
     if (state.getScoreTrack().isGameOver()) {
         state.setGameOver(true);
@@ -245,6 +235,70 @@ System.out.println("default effects = " + card.getEffects());
     return state.getMarketCardIds().stream()
             .map(id -> id == null ? null : repo.getById(id))
             .toList();
+  }
+
+  public List<ProductionCardDef> getActiveProductionCards(GameState state) {
+    pruneExpiredActiveCards(state);
+    return state.getActiveLongTerm().stream()
+            .map(active -> repo.getById(active.getCardId()))
+            .toList();
+  }
+
+  private void pruneExpiredActiveCards(GameState state) {
+    int round = state.getCurrentRound();
+    state.getActiveLongTerm().forEach(active -> normalizeActiveCardProgression(active, round));
+    state.getActiveLongTerm().removeIf(active -> !isCardStillActive(state, active, round));
+  }
+
+  private boolean isCardStillActive(GameState state, ActiveProductionCard active, int round) {
+    if (active.getRemainingYears() != null) {
+      return !active.getRemainingYears().isEmpty();
+    }
+
+    if (active.getCurrentYear() != null || active.getFinalApplicableYear() != null) {
+      int currentYear = active.getCurrentYear() != null
+              ? active.getCurrentYear()
+              : round - active.getPurchasedRound() + 1;
+      int finalYear = active.getFinalApplicableYear() != null
+              ? active.getFinalApplicableYear()
+              : resolveMaxApplicableYear(state, active);
+      return currentYear <= finalYear;
+    }
+
+    return round - active.getPurchasedRound() + 1 <= resolveMaxApplicableYear(state, active);
+  }
+
+  private void normalizeActiveCardProgression(ActiveProductionCard active, int round) {
+    int derivedYear = round - active.getPurchasedRound() + 1;
+
+    if (active.getRemainingYears() != null) {
+      active.getRemainingYears().removeIf(year -> year < derivedYear);
+    }
+
+    if (active.getCurrentYear() != null) {
+      active.setCurrentYear(Math.max(active.getCurrentYear(), derivedYear));
+    }
+  }
+
+  private int resolveMaxApplicableYear(GameState state, ActiveProductionCard active) {
+    ProductionCardDef card = repo.getById(active.getCardId());
+    List<EffectDef> effects = resolveEffects(
+            card,
+            state.getFarmingMode(),
+            active.getPlantationSizeAtPurchase()
+    );
+
+    if (effects == null) {
+      return 0;
+    }
+
+    return effects.stream()
+            .map(EffectDef::getYears)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .mapToInt(Integer::intValue)
+            .max()
+            .orElse(0);
   }
 
   public void refillMarketToFive(GameState state) {

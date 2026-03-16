@@ -141,6 +141,13 @@ public class GameController {
      return productionCardService.getMarketCards(state);
  }
 
+    @GetMapping("/active-production-cards")
+    public List<ProductionCardDef> activeProductionCards() {
+        // Return the long-term production cards that are currently active in the game.
+        GameState state = gameStateService.getState();
+        return productionCardService.getActiveProductionCards(state);
+    }
+
     @PostMapping("/buy-card")
     public ScoreResult buyCard(@RequestParam String cardId) {
         // Purchase a card by id and return the resulting score update payload.

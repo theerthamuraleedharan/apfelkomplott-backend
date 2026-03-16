@@ -195,7 +195,7 @@
     ],
     "requires": [],
     "media": [
-      { "type": "qr", "src": "/cards/temporaryEmploymentAgencies.png" },
+      { "type": "qr", "src": "/cards/temporaryEmploymentAgenciesQR.png" },
       { "type": "image", "src": "/cards/shortTermProductionCard.png" }
     ]
   },
@@ -260,23 +260,202 @@
   },
 
   {
-  "id": "LT_PRODUCTION_METHOD",
-  "name": "Production Method -20",
-  "deck": "LONG_TERM",
-  "category": "Effects depend on the selected farming mode.",
-  "cost": { "fixed": 10 },
-  "effectsByMode": {
-    "ORGANIC": [
-      { "years": [1, 2], "economy": -1, "environment": 1, "health": 0 }
-    ],
-    "CONVENTIONAL": [
-      { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+    "id": "LT_PRODUCTION_METHOD",
+    "name": "Production Method -20",
+    "deck": "LONG_TERM",
+    "category": "Effects depend on the selected farming mode.",
+    "cost": { "fixed": 10 },
+    "effectsByMode": {
+      "ORGANIC": [
+        { "years": [1, 2], "economy": -1, "environment": 1, "health": 0 }
+      ],
+      "CONVENTIONAL": [
+        { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+      ]
+    },
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
     ]
   },
-  "requires": [],
-  "media": [
-    { "type": "image", "src": "/cards/longTermProductionCard.png" }
-  ]
-}
+
+  {
+    "id": "LT_WORKFORCE_21",
+    "name": "Workforce -21",
+    "deck": "LONG_TERM",
+    "category": "Investment in workplace design, training, and further development of employees.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": -1, "environment": 0, "health": 0 },
+      { "years": [2, 3], "economy": 1, "environment": 0, "health": 1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_CROP_VARIETY_22",
+    "name": "Production Business -22",
+    "deck": "LONG_TERM",
+    "category": "Currently uses the 1-3 crop branch because the game only supports apple production for now.",
+    "cost": { "fixed": 20 },
+    "effects": [
+      { "years": [2, 3], "economy": 2, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" },
+      { "type": "qr", "src": "/cards/cropVarietyEffectsQR.png" }
+    ]
+  },
+
+  {
+    "id": "LT_NO_PESTICIDES_23",
+    "name": "Plant Protection -23",
+    "deck": "LONG_TERM",
+    "category": "Complete avoidance of pesticides.",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1, 2], "economy": -2, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_EGG_PRODUCTION_24",
+    "name": "Business -24",
+    "deck": "LONG_TERM",
+    "category": "Egg production between the tree rows.",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [2, 3], "economy": 2, "environment": 0, "health": 0 },
+      { "years": [1, 2, 3], "economy": 0, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_COLD_STORAGE_25",
+    "name": "Operation -25",
+    "deck": "LONG_TERM",
+    "category": "Installation of an in-house cold storage facility.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [2, 3], "economy": 2, "environment": 0, "health": 0 },
+      { "years": [1, 2, 3], "economy": 0, "environment": -1, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" },
+      { "type": "qr", "src": "/cards/coldstorageQR.png" }
+    ]
+  },
+
+  {
+    "id": "LT_BEEKEEPING_26",
+    "name": "Operation -26",
+    "deck": "LONG_TERM",
+    "category": "Establishment of a beekeeping business next to the apple plantation.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 1, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" },
+      { "type": "qr", "src": "/cards/beekeepingQR.png" }
+    ]
+  },
+
+  {
+    "id": "LT_HARVEST_MACHINE_27",
+    "name": "Workforce -27",
+    "deck": "LONG_TERM",
+    "category": "Purchase of a self-driving harvest machine for fruit collection.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" },
+      { "type": "qr", "src": "/cards/harvestMachineQR.png" }
+    ]
+  },
+
+  {
+    "id": "LT_EMPLOYMENT_SUPPORT_28",
+    "name": "Workforce -28",
+    "deck": "LONG_TERM",
+    "category": "Cooperation with local employment support for retraining and vocational funding.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" },
+      { "type": "qr", "src": "/cards/employmentSupportQR.png" }
+    ]
+  },
+
+  {
+    "id": "LT_SEASONAL_WORKERS_29",
+    "name": "Workforce -29",
+    "deck": "LONG_TERM",
+    "category": "Hiring seasonal workers.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" },
+      { "type": "qr", "src": "/cards/seasonalWorkersQR.png" }
+    ]
+  },
+
+  {
+    "id": "LT_TOURISM_COOPERATION_30",
+    "name": "Production Business -30",
+    "deck": "LONG_TERM",
+    "category": "Cooperation with local tourism for marketing, farm festivals, and purchase agreements.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_WATER_MANAGEMENT_31",
+    "name": "Water Management -31",
+    "deck": "LONG_TERM",
+    "category": "Installation of a private well with protected water source and on-site treatment.",
+    "cost": {
+      "byMode": {
+        "CONVENTIONAL": 10,
+        "ORGANIC": 20
+      }
+    },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  }
 
 ]
