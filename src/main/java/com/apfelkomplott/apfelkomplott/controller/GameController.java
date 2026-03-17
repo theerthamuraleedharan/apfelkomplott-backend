@@ -24,8 +24,6 @@ public class GameController {
     private final GameStateService gameStateService;
     private final ProductionCardService productionCardService;
 
-    private final EventService eventService;
-
     public GameController(
             GameInitializer gameInitializer,
             RoundEngine roundEngine,
@@ -37,7 +35,6 @@ public class GameController {
         this.investmentService = investmentService;
         this.gameStateService = gameStateService;
         this.productionCardService = productionCardService;
-        this.eventService = eventService;
     }
 
     // ===============================

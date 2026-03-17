@@ -34,14 +34,6 @@ public class InvestmentService {
         }
     }
 
-    // ===== Helper =====
-    private boolean isTreeOrLogistics(InvestmentType type) {
-        return type == InvestmentType.BUY_SEEDLING
-                || type == InvestmentType.BUY_PRE_GROWN_TREE
-                || type == InvestmentType.BUY_CRATE
-                || type == InvestmentType.BUY_SALES_STAND;
-    }
-
     // ===== Actions =====
     private void buySeedling(GameState state) {
         if (state.getMoney() < 3) return;

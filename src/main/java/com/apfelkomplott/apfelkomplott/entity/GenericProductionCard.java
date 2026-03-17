@@ -1,6 +1,5 @@
 package com.apfelkomplott.apfelkomplott.entity;
 
-import com.apfelkomplott.apfelkomplott.entity.*;
 import java.util.HashSet;
 import java.util.Set;
 

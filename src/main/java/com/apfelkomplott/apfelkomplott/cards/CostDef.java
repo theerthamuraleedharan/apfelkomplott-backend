@@ -1,7 +1,6 @@
 package com.apfelkomplott.apfelkomplott.cards;
 
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
-import lombok.Data;
 import java.util.Map;
 public class CostDef {
 

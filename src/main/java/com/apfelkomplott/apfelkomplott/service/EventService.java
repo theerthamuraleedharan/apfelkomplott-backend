@@ -9,10 +9,8 @@ import com.apfelkomplott.apfelkomplott.entity.GameState;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.apfelkomplott.apfelkomplott.entity.EventType.*;
 
 @Service
 public class EventService {
