@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class InvestmentService {
 
+    private static final int MAX_TREES_PER_FIELD = 8;
+
     public void invest(GameState state, InvestmentType type) {
 
         if (state.isGameOver()) return;
@@ -36,6 +38,7 @@ public class InvestmentService {
 
     // ===== Actions =====
     private void buySeedling(GameState state) {
+        ensureFieldHasCapacity(state);
         if (state.getMoney() < 3) return;
 
         Tree tree = new Tree();
@@ -47,6 +50,7 @@ public class InvestmentService {
     }
 
     private void buyPreGrownTree(GameState state) {
+        ensureFieldHasCapacity(state);
         if (state.getMoney() < 4) return;
 
         Tree tree = new Tree();
@@ -69,5 +73,12 @@ public class InvestmentService {
 
         state.getPlantation().getSalesStands().add(new SalesStand());
         state.setMoney(state.getMoney() - 3);
+    }
+
+    private void ensureFieldHasCapacity(GameState state) {
+        int currentTreeCount = state.getPlantation().getTrees().size();
+        if (currentTreeCount >= MAX_TREES_PER_FIELD) {
+            throw new IllegalStateException("A field can contain at most 8 plants.");
+        }
     }
 }

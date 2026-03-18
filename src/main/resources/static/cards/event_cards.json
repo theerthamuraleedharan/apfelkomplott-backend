@@ -1,0 +1,139 @@
+[
+  {
+    "id": "EVT_SEVERE_WEATHER",
+    "name": "Severe Weather",
+    "description": "Hail and flooding cause crop failures.",
+    "effects": [
+      {
+        "type": "HARVEST_LOSS_BY_PLANTATION_SIZE",
+        "divisor": 3,
+        "amountByPlantationSize": {
+          "LARGE": 1,
+          "MEDIUM": 1,
+          "SMALL": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "EVT_STORM",
+    "name": "Storm",
+    "description": "A storm destroys your plantation.",
+    "effects": [
+      {
+        "type": "HARVEST_LOSS_BY_PLANTATION_SIZE",
+        "divisor": 1,
+        "amountByPlantationSize": {
+          "LARGE": 1,
+          "MEDIUM": 1,
+          "SMALL": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "EVT_STORM_DAMAGE",
+    "name": "Storm Damage",
+    "description": "A storm destroys part of your plantation.",
+    "effects": [
+      {
+        "type": "HARVEST_LOSS_BY_PLANTATION_SIZE",
+        "divisor": 1,
+        "amountByPlantationSize": {
+          "LARGE": 1,
+          "MEDIUM": 1,
+          "SMALL": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "EVT_INTEREST_RATES",
+    "name": "Interest Rates",
+    "description": "Your bank raises its interest rates.",
+    "effects": [
+      {
+        "type": "MONEY_DELTA",
+        "amount": -3
+      }
+    ]
+  },
+  {
+    "id": "EVT_INTEREST_RATES_DECREASE",
+    "name": "Interest Rates",
+    "description": "Your bank lowers its interest rates.",
+    "effects": [
+      {
+        "type": "MONEY_DELTA",
+        "amount": 3
+      }
+    ]
+  },
+  {
+    "id": "EVT_FUNDING",
+    "name": "Funding",
+    "description": "You receive financial support from the EU for implementing new environmental requirements.",
+    "effects": [
+      {
+        "type": "MONEY_DELTA",
+        "amount": 5
+      }
+    ]
+  },
+  {
+    "id": "EVT_TAX_REFUND",
+    "name": "Tax Refund",
+    "description": "You receive a tax refund.",
+    "effects": [
+      {
+        "type": "MONEY_DELTA",
+        "amount": 3
+      }
+    ]
+  },
+  {
+    "id": "EVT_PRICE_PREMIUM",
+    "name": "Premium",
+    "description": "You receive a premium for a major supply contract with a local cider mill.",
+    "effects": [
+      {
+        "type": "APPLE_PRICE_MODIFIER_DELTA",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "id": "EVT_PENALTY_PAYMENT",
+    "name": "Penalty Payment",
+    "description": "Improper use of pesticides results in penalty payments.",
+    "effects": [
+      {
+        "type": "MONEY_DELTA_BY_FARMING_MODE",
+        "amountByFarmingMode": {
+          "CONVENTIONAL": -2,
+          "ORGANIC": -1
+        }
+      }
+    ],
+    "media": [
+      {
+        "type": "qr",
+        "src": "/cards/event-payment-penalty.png"
+      }
+    ]
+  },
+  {
+    "id": "EVT_PRIZE",
+    "name": "Prize",
+    "description": "You win an award for developing a new apple variety (conventional farms only).",
+    "effects": [
+      {
+        "type": "MONEY_DELTA_BY_FARMING_MODE",
+        "amountByFarmingMode": {
+          "CONVENTIONAL": 3
+        }
+      }
+    ]
+  }
+
+]

@@ -3,17 +3,29 @@ package com.apfelkomplott.apfelkomplott.service;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class HarvestService {
 
+    private final EventService eventService;
+
+    public HarvestService(EventService eventService) {
+        this.eventService = eventService;
+    }
+
     public void harvest(GameState state) {
-
         Plantation plantation = state.getPlantation();
+        List<Tree> matureTrees = plantation.getTrees().stream()
+                .filter(Tree::isMature)
+                .toList();
+        int harvestLoss = Math.min(matureTrees.size(), eventService.calculateHarvestLoss(state));
+        int harvestableCount = Math.max(0, matureTrees.size() - harvestLoss);
 
-        for (Tree tree : plantation.getTrees()) {
+        for (int i = 0; i < harvestableCount; i++) {
+            Tree tree = matureTrees.get(i);
 
             if (tree.getFieldPosition() >= 3 && tree.getFieldPosition() <= 6) {
-
                 Apple apple = new Apple();
                 apple.setHarvestedRound(state.getCurrentRound());
 
@@ -26,6 +38,8 @@ public class HarvestService {
                 plantation.getApples().add(apple);
             }
         }
+
+        state.getRoundEventImpact().clear();
     }
 
     private boolean placeInTransport(GameState state, Apple apple) {

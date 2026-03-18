@@ -19,16 +19,18 @@ public class GameState {
     private ScoreResult lastScoreResult;
     private ScoreResult productionCardFinalScoreResult;
     private FarmingMode farmingMode;
-    private EventCard lastDrawnEvent;
     private List<ProductionCard> activeProductionCards;
-    private List<EventCard> eventDeck = new ArrayList<>();
-    private List<EventCard> activeEvents = new ArrayList<>();
     private List<String> marketCardIds = new ArrayList<>();
     private List<ActiveProductionCard> activeLongTerm = new ArrayList<>();
     private List<String> shortTermUsedThisRound = new ArrayList<>();
     private List<String> productionDrawPile = new ArrayList<>();
     private List<String> productionDiscardPile = new ArrayList<>();
+    private List<String> eventDrawPile = new ArrayList<>();
+    private List<String> eventDiscardPile = new ArrayList<>();
+    private List<String> pendingEventOptions = new ArrayList<>();
     private List<ProductionCardDef> market = new ArrayList<>();
+    private EventResolution lastEventResult;
+    private RoundEventImpact roundEventImpact = new RoundEventImpact();
 
     public List<ProductionCardDef> getMarket() {
         return market;
@@ -49,7 +51,6 @@ public class GameState {
         this.scoreTrack = new ScoreTrack();
         this.plantation = new Plantation();
 
-        this.activeEvents = new ArrayList<>();
         this.activeProductionCards = new ArrayList<>();
 
         this.gameOver = false;
@@ -123,30 +124,6 @@ public class GameState {
         this.farmingMode = farmingMode;
     }
 
-    public List<EventCard> getEventDeck() {
-        return eventDeck;
-    }
-
-    public void setEventDeck(List<EventCard> eventDeck) {
-        this.eventDeck = eventDeck;
-    }
-
-    public List<EventCard> getActiveEvents() {
-        return activeEvents;
-    }
-
-    public void setActiveEvents(List<EventCard> activeEvents) {
-        this.activeEvents = activeEvents;
-    }
-
-    public EventCard getLastDrawnEvent() {
-        return lastDrawnEvent;
-    }
-
-    public void setLastDrawnEvent(EventCard lastDrawnEvent) {
-        this.lastDrawnEvent = lastDrawnEvent;
-    }
-
     public void setScoreTrack(ScoreTrack scoreTrack) {
         this.scoreTrack = scoreTrack;
     }
@@ -201,6 +178,50 @@ public class GameState {
 
     public void setProductionCardFinalScoreResult(ScoreResult productionCardFinalScoreResult) {
         this.productionCardFinalScoreResult = productionCardFinalScoreResult;   
+    }
+
+    public List<String> getEventDrawPile() {
+        return eventDrawPile;
+    }
+
+    public void setEventDrawPile(List<String> eventDrawPile) {
+        this.eventDrawPile = eventDrawPile;
+    }
+
+    public List<String> getEventDiscardPile() {
+        return eventDiscardPile;
+    }
+
+    public void setEventDiscardPile(List<String> eventDiscardPile) {
+        this.eventDiscardPile = eventDiscardPile;
+    }
+
+    public List<String> getPendingEventOptions() {
+        return pendingEventOptions;
+    }
+
+    public void setPendingEventOptions(List<String> pendingEventOptions) {
+        this.pendingEventOptions = pendingEventOptions;
+    }
+
+    public EventResolution getLastEventResult() {
+        return lastEventResult;
+    }
+
+    public void setLastEventResult(EventResolution lastEventResult) {
+        this.lastEventResult = lastEventResult;
+    }
+
+    public RoundEventImpact getRoundEventImpact() {
+        return roundEventImpact;
+    }
+
+    public void setRoundEventImpact(RoundEventImpact roundEventImpact) {
+        this.roundEventImpact = roundEventImpact;
+    }
+
+    public int getCurrentSaleBonusPerApple() {
+        return plantation == null ? 0 : plantation.getApplePriceModifier();
     }
 }
 

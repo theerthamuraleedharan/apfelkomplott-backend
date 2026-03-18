@@ -3,6 +3,8 @@ package com.apfelkomplott.apfelkomplott.controller;
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
 import com.apfelkomplott.apfelkomplott.controller.dto.BuyProductionRequest;
+import com.apfelkomplott.apfelkomplott.controller.dto.EventSelectionRequest;
+import com.apfelkomplott.apfelkomplott.controller.dto.HiddenEventCardDto;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
@@ -23,29 +25,22 @@ public class GameController {
     private final InvestmentService investmentService;
     private final GameStateService gameStateService;
     private final ProductionCardService productionCardService;
+    private final EventService eventService;
 
     public GameController(
             GameInitializer gameInitializer,
             RoundEngine roundEngine,
             InvestmentService investmentService,
             GameStateService gameStateService,
-            ProductionCardService productionCardService, EventService eventService) {
+            ProductionCardService productionCardService,
+            EventService eventService) {
         this.gameInitializer = gameInitializer;
         this.roundEngine = roundEngine;
         this.investmentService = investmentService;
         this.gameStateService = gameStateService;
         this.productionCardService = productionCardService;
+        this.eventService = eventService;
     }
-
-    // ===============================
-    // GAME LIFECYCLE
-    // ===============================
-
-   /* @PostMapping("/start")
-    public GameState startGame() {
-        return gameStateService.createNewGame(new GameState());
-    }
-*/
 
     @PostMapping("/start")
     public GameState start(@RequestParam FarmingMode mode) {
@@ -55,6 +50,7 @@ public class GameController {
 
         // Prepare the production deck and initial market for the new game.
         productionCardService.initDeckAndMarket(s);
+        eventService.initDeck(s);
 
         return gameStateService.createNewGame(s);
     }
@@ -64,6 +60,8 @@ public class GameController {
     public GameState startDemoGame() {
         // Seed the game with demo data for quicker manual testing.
         GameState state = gameInitializer.createDemoGame();
+        productionCardService.initDeckAndMarket(state);
+        eventService.initDeck(state);
         return gameStateService.createNewGame(state);
     }
 
@@ -89,6 +87,27 @@ public class GameController {
 
         // Delegate phase progression to the round engine, then persist the updated state.
         roundEngine.runNextPhase(state);
+        return gameStateService.updateState(state);
+    }
+
+    @GetMapping("/event/options")
+    public List<HiddenEventCardDto> getEventOptions() {
+        GameState state = gameStateService.getState();
+        if (state == null) {
+            throw new IllegalStateException("Game not started");
+        }
+
+        return eventService.getHiddenOptions(state);
+    }
+
+    @PostMapping("/event/select")
+    public GameState selectEvent(@RequestBody EventSelectionRequest request) {
+        GameState state = gameStateService.getState();
+        if (state == null) {
+            throw new IllegalStateException("Game not started");
+        }
+
+        eventService.selectEvent(state, request.getOptionIndex());
         return gameStateService.updateState(state);
     }
 
@@ -126,11 +145,6 @@ public class GameController {
     // ===============================
     // MARKET
     // ===============================
-
- /*   @GetMapping("/market")
-    public List<ProductionCardDef> getMarket() {
-        return productionCardService.getVisibleCards();
-    }*/
  @GetMapping("/market")
  public List<ProductionCardDef> market() {
      // Return the currently visible production cards for the active game.

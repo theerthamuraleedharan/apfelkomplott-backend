@@ -1,11 +1,9 @@
 package com.apfelkomplott.apfelkomplott.engine;
 
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
-import com.apfelkomplott.apfelkomplott.entity.EventCard;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
-import com.apfelkomplott.apfelkomplott.market.EventCardDeck;
 import com.apfelkomplott.apfelkomplott.service.*;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +15,8 @@ public class RoundEngine {
     private final HarvestService harvestService;
     private final RotationService rotationService;
     private final ScoringService scoringService;
-    private final EventService eventService;
 
+    private final EventService eventService;
     private final ProductionCardService productionCardService;
 
 
@@ -28,7 +26,8 @@ public class RoundEngine {
             HarvestService harvestService,
             RotationService rotationService,
             ScoringService scoringService,
-            EventCardDeck eventCardDeck, EventService eventService, ProductionCardService productionCardService) {
+            EventService eventService,
+            ProductionCardService productionCardService) {
 
         this.sellService = sellService;
         this.deliveryService = deliveryService;
@@ -54,17 +53,16 @@ public class RoundEngine {
                 state.setLastSellResult(null);
                 state.setLastScoreResult(null);
                 state.setProductionCardFinalScoreResult(null);
+                state.setLastEventResult(null);
+                state.getPendingEventOptions().clear();
+                state.getRoundEventImpact().clear();
 
             }
 
 
             case DRAW_EVENT -> {
-
-                EventCard drawnCard = eventService.drawEvent(state);
-
-                state.setLastDrawnEvent(drawnCard); // for UI popup
-
-                state.setCurrentPhase(GamePhase.REFILL_CARDS);
+                eventService.prepareDrawIfNeeded(state);
+                return;
             }
 
 
