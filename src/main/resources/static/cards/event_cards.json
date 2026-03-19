@@ -134,6 +134,47 @@
         }
       }
     ]
+  },
+  {
+    "id": "EVT_CHEMICAL_ACCIDENT",
+    "name": "Chemical Accident",
+    "description": "A chemical accident contaminates your water source. Water Management costs 1 more money from now on.",
+    "effects": [
+      {
+        "type": "PRODUCTION_CARD_COST_DELTA",
+        "amount": 1,
+        "targetCardGroup": "WATER_MANAGEMENT"
+      }
+    ]
+  },
+  {
+    "id": "EVT_DROUGHT",
+    "name": "Drought",
+    "description": "Low rainfall and high temperatures increase water demand. Water Management costs 1 more money from now on. Shade Nets cost 1 more money from now on.",
+    "effects": [
+      {
+        "type": "PRODUCTION_CARD_COST_DELTA",
+        "amount": 1,
+        "targetCardGroup": "WATER_MANAGEMENT"
+      },
+      {
+        "type": "PRODUCTION_CARD_COST_DELTA",
+        "amount": 1,
+        "targetCardGroup": "SHADE_NETS"
+      }
+    ]
+  },
+  {
+    "id": "EVT_POLLUTION",
+    "name": "Pollution",
+    "description": "Polluted groundwater increases operating costs due to the need for clean water and possible water treatment. Water Management costs 2 more money from now on.",
+    "effects": [
+      {
+        "type": "PRODUCTION_CARD_COST_DELTA",
+        "amount": 2,
+        "targetCardGroup": "WATER_MANAGEMENT"
+      }
+    ]
   }
 
 ]

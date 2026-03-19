@@ -57,7 +57,7 @@ public class ProductionCardService {
         if (!hasReq) throw new IllegalStateException("Missing prerequisite: " + req);
     }
 
-    int cost = resolveCost(card, state.getFarmingMode());
+    int cost = resolveCost(state, card);
     if (state.getMoney() < cost) {
         throw new IllegalStateException("Not enough money.");
     }
@@ -110,6 +110,12 @@ public class ProductionCardService {
   private int resolveCost(ProductionCardDef card, FarmingMode mode) {
     if (card.getCost() == null) return 0;
     return card.getCost().resolve(mode);
+  }
+
+  private int resolveCost(GameState state, ProductionCardDef card) {
+    int baseCost = resolveCost(card, state.getFarmingMode());
+    int modifier = state.getProductionCardCostModifiers().getOrDefault(card.getId(), 0);
+    return Math.max(0, baseCost + modifier);
   }
 
   private boolean usesPlantationSize(ProductionCardDef card) {

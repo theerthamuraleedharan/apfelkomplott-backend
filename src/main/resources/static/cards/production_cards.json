@@ -102,6 +102,32 @@
     "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
   },
 
+  {
+    "id": "ST_PLANT_PROTECTION_PESTICIDES_39",
+    "name": "Plant Protection",
+    "deck": "SHORT_TERM",
+    "category": "Pest control through pesticides. Pest populations are reduced in the short term, but there are long-term effects on the environment and biodiversity.",
+    "cost": { "fixed": 5 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": -1, "health": -1 }
+    ],
+    "requires": [],
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
+  },
+
+  {
+    "id": "ST_PLANT_PROTECTION_ECO_FRIENDLY_40",
+    "name": "Plant Protection",
+    "deck": "SHORT_TERM",
+    "category": "Alternative: environmentally friendly pest control.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1], "economy": 1, "environment": 0, "health": 0 }
+    ],
+    "requires": [],
+    "media": [ { "type": "image", "src": "/cards/shortTermProductionCard.png" }]
+  },
+
 
   {
     "id": "ST_OPTIMIZATION_OF_HARVESTING_TIME",
@@ -451,6 +477,158 @@
     },
     "effects": [
       { "years": [1, 2], "economy": 1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_WATER_MANAGEMENT_PRIVATE_WELL_32",
+    "name": "Water Management",
+    "deck": "LONG_TERM",
+    "category": "Creation of a private well: Water source is protected from contamination. More cost-effective. Own treatment through connected sewage treatment plant.",
+    "cost": {
+      "byMode": {
+        "CONVENTIONAL": 10,
+        "ORGANIC": 20
+      }
+    },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 1, "health": 1 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_PRODUCTION_BUSINESS_JUICE_33",
+    "name": "Production Business",
+    "deck": "LONG_TERM",
+    "category": "Organic farming: Juice production without preservatives, resulting in shorter storage time. Conventional farming: Longer storage and processing of apples that cannot be sold directly.",
+    "cost": {
+      "byMode": {
+        "CONVENTIONAL": 20,
+        "ORGANIC": 15
+      }
+    },
+    "effectsByMode": {
+      "ORGANIC": [
+        { "years": [1], "economy": -1, "environment": 2, "health": 0 },
+        { "years": [2, 3], "economy": 0, "environment": 1, "health": 0 }
+      ],
+      "CONVENTIONAL": [
+        { "years": [1, 2, 3], "economy": 2, "environment": -1, "health": 0 }
+      ]
+    },
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_PRODUCTION_BUSINESS_LEAF_FALL_34",
+    "name": "Production Business",
+    "deck": "LONG_TERM",
+    "category": "Organic farming: Accelerating leaf fall through yeast spraying. Conventional farming: Treating the soil with herbicides.",
+    "cost": {
+      "byMode": {
+        "CONVENTIONAL": 20,
+        "ORGANIC": 30
+      }
+    },
+    "effectsByMode": {
+      "ORGANIC": [
+        { "years": [1, 2, 3], "economy": 0, "environment": 2, "health": 2 }
+      ],
+      "CONVENTIONAL": [
+        { "years": [1], "economy": 2, "environment": -2, "health": -2 },
+        { "years": [2, 3], "economy": 2, "environment": -1, "health": -1 }
+      ]
+    },
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_WATER_MANAGEMENT_ECO_35",
+    "name": "Water Management",
+    "deck": "LONG_TERM",
+    "category": "Environmentally friendly water management (rainwater use, drip irrigation system, and water recycling).",
+    "cost": {
+      "byMode": {
+        "CONVENTIONAL": 15,
+        "ORGANIC": 30
+      }
+    },
+    "effectsByMode": {
+      "CONVENTIONAL": [
+        { "years": [1, 2], "economy": 1, "environment": 1, "health": 1 }
+      ],
+      "ORGANIC": [
+        { "years": [1, 2], "economy": 1, "environment": 2, "health": 2 }
+      ]
+    },
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_PLANT_PROTECTION_BENEFICIAL_INSECTS_36",
+    "name": "Plant Protection",
+    "deck": "LONG_TERM",
+    "category": "Use of beneficial insects for plant protection (ladybugs, parasitic wasps, hoverflies).",
+    "cost": {
+      "byMode": {
+        "CONVENTIONAL": 15,
+        "ORGANIC": 30
+      }
+    },
+    "effectsByMode": {
+      "CONVENTIONAL": [
+        { "years": [1, 2], "economy": 1, "environment": 1, "health": 1 }
+      ],
+      "ORGANIC": [
+        { "years": [1, 2], "economy": 2, "environment": 2, "health": 2 }
+      ]
+    },
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_OPERATION_BERRY_SHRUBS_37",
+    "name": "Operation",
+    "deck": "LONG_TERM",
+    "category": "Additional cultivation of berry bushes under the apple trees. The shrubs use the trees as support and their ground-covering effect keeps the soil moist and cool.",
+    "cost": { "fixed": 10 },
+    "effects": [
+      { "years": [1, 2], "economy": 1, "environment": 1, "health": 0 }
+    ],
+    "requires": [],
+    "media": [
+      { "type": "image", "src": "/cards/longTermProductionCard.png" }
+    ]
+  },
+
+  {
+    "id": "LT_WORKFORCE_COOPERATIVE_MACHINE_38",
+    "name": "Workforce",
+    "deck": "LONG_TERM",
+    "category": "Cooperation with nearby farms to form a production cooperative. Purchase of a self-driving harvesting machine for fruit collection.",
+    "cost": { "fixed": 15 },
+    "effects": [
+      { "years": [1, 3], "economy": 2, "environment": 0, "health": 0 }
     ],
     "requires": [],
     "media": [

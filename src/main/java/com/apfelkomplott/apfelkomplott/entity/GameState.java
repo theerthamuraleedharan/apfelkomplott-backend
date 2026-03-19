@@ -6,7 +6,9 @@ import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameState {
 
@@ -31,6 +33,7 @@ public class GameState {
     private List<ProductionCardDef> market = new ArrayList<>();
     private EventResolution lastEventResult;
     private RoundEventImpact roundEventImpact = new RoundEventImpact();
+    private Map<String, Integer> productionCardCostModifiers = new HashMap<>();
 
     public List<ProductionCardDef> getMarket() {
         return market;
@@ -222,6 +225,14 @@ public class GameState {
 
     public int getCurrentSaleBonusPerApple() {
         return plantation == null ? 0 : plantation.getApplePriceModifier();
+    }
+
+    public Map<String, Integer> getProductionCardCostModifiers() {
+        return productionCardCostModifiers;
+    }
+
+    public void setProductionCardCostModifiers(Map<String, Integer> productionCardCostModifiers) {
+        this.productionCardCostModifiers = productionCardCostModifiers;
     }
 }
 

@@ -68,11 +68,7 @@ public class GameController {
     @GetMapping("/state")
     public GameState getState() {
         // Expose the current saved game state to the frontend.
-        GameState state = gameStateService.getState();
-        if (state == null) {
-            throw new IllegalStateException("Game not started");
-        }
-        return state;
+        return requireState();
     }
 
     @PostMapping("/next-phase")
@@ -92,21 +88,13 @@ public class GameController {
 
     @GetMapping("/event/options")
     public List<HiddenEventCardDto> getEventOptions() {
-        GameState state = gameStateService.getState();
-        if (state == null) {
-            throw new IllegalStateException("Game not started");
-        }
-
+        GameState state = requireState();
         return eventService.getHiddenOptions(state);
     }
 
     @PostMapping("/event/select")
     public GameState selectEvent(@RequestBody EventSelectionRequest request) {
-        GameState state = gameStateService.getState();
-        if (state == null) {
-            throw new IllegalStateException("Game not started");
-        }
-
+        GameState state = requireState();
         eventService.selectEvent(state, request.getOptionIndex());
         return gameStateService.updateState(state);
     }
@@ -119,10 +107,7 @@ public class GameController {
     @PostMapping("/invest")
     public GameState invest(@RequestBody InvestmentActionRequest request) {
 
-        GameState state = gameStateService.getState();
-        if (state == null) {
-            throw new IllegalStateException("Game not started");
-        }
+        GameState state = requireState();
 
         if (state.isGameOver()) {
             return state;
@@ -135,7 +120,7 @@ public class GameController {
 
     @PostMapping("/invest/production")
     public GameState buyProduction(@RequestBody BuyProductionRequest req) {
-        GameState state = gameStateService.getState();
+        GameState state = requireState();
         // Buy a production card from the current market, then store the updated game state.
         productionCardService.buyCard(state, req.getCardId());
         return gameStateService.updateState(state);
@@ -148,21 +133,21 @@ public class GameController {
  @GetMapping("/market")
  public List<ProductionCardDef> market() {
      // Return the currently visible production cards for the active game.
-     GameState state = gameStateService.getState();
+     GameState state = requireState();
      return productionCardService.getMarketCards(state);
  }
 
     @GetMapping("/active-production-cards")
     public List<ProductionCardDef> activeProductionCards() {
         // Return the long-term production cards that are currently active in the game.
-        GameState state = gameStateService.getState();
+        GameState state = requireState();
         return productionCardService.getActiveProductionCards(state);
     }
 
     @PostMapping("/buy-card")
     public ScoreResult buyCard(@RequestParam String cardId) {
         // Purchase a card by id and return the resulting score update payload.
-        GameState state = gameStateService.getState();
+        GameState state = requireState();
         ScoreResult result = productionCardService.buyCard(state, cardId);
         gameStateService.updateState(state);
         return result;
@@ -170,7 +155,15 @@ public class GameController {
 
     @PostMapping("/card-scoring")
     public ScoreResult applyCardScoring() {
-        GameState state = gameStateService.getState();
+        GameState state = requireState();
         return productionCardService.applyLongTermCardScoring(state);
+    }
+
+    private GameState requireState() {
+        GameState state = gameStateService.getState();
+        if (state == null) {
+            throw new IllegalStateException("Game not started");
+        }
+        return state;
     }
 }

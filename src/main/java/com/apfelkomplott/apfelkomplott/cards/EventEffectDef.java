@@ -4,6 +4,8 @@ import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.Enum.PlantationSize;
 
 import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class EventEffectDef {
@@ -13,6 +15,8 @@ public class EventEffectDef {
     private Integer divisor;
     private Map<FarmingMode, Integer> amountByFarmingMode = new EnumMap<>(FarmingMode.class);
     private Map<PlantationSize, Integer> amountByPlantationSize = new EnumMap<>(PlantationSize.class);
+    private List<String> targetCardIds = new ArrayList<>();
+    private String targetCardGroup;
 
     public EventEffectDef() {
     }
@@ -70,5 +74,21 @@ public class EventEffectDef {
 
     public void setAmountByPlantationSize(Map<PlantationSize, Integer> amountByPlantationSize) {
         this.amountByPlantationSize = amountByPlantationSize;
+    }
+
+    public List<String> getTargetCardIds() {
+        return targetCardIds;
+    }
+
+    public void setTargetCardIds(List<String> targetCardIds) {
+        this.targetCardIds = targetCardIds;
+    }
+
+    public String getTargetCardGroup() {
+        return targetCardGroup;
+    }
+
+    public void setTargetCardGroup(String targetCardGroup) {
+        this.targetCardGroup = targetCardGroup;
     }
 }

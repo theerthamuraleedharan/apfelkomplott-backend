@@ -16,6 +16,7 @@ public class EventResolution {
     private int expectedHarvestLoss;
     private int saleBonusPerAppleChange;
     private int resultingSaleBonusPerApple;
+    private int productionCardCostChange;
     private List<MediaItem> media = new ArrayList<>();
     private List<String> effects = new ArrayList<>();
 
@@ -81,6 +82,14 @@ public class EventResolution {
 
     public void setResultingSaleBonusPerApple(int resultingSaleBonusPerApple) {
         this.resultingSaleBonusPerApple = resultingSaleBonusPerApple;
+    }
+
+    public int getProductionCardCostChange() {
+        return productionCardCostChange;
+    }
+
+    public void setProductionCardCostChange(int productionCardCostChange) {
+        this.productionCardCostChange = productionCardCostChange;
     }
 
     public List<MediaItem> getMedia() {

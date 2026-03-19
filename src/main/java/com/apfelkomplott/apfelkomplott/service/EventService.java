@@ -5,6 +5,7 @@ import com.apfelkomplott.apfelkomplott.Enum.PlantationSize;
 import com.apfelkomplott.apfelkomplott.cards.EventCardDef;
 import com.apfelkomplott.apfelkomplott.cards.EventEffectDef;
 import com.apfelkomplott.apfelkomplott.cards.EventEffectType;
+import com.apfelkomplott.apfelkomplott.cards.ProductionCardIds;
 import com.apfelkomplott.apfelkomplott.controller.dto.HiddenEventCardDto;
 import com.apfelkomplott.apfelkomplott.entity.EventResolution;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Service
 public class EventService {
@@ -95,7 +98,11 @@ public class EventService {
         EventCardDef selectedCard = repository.getById(selectedCardId);
         EventResolution resolution = applyEffects(state, selectedCard);
 
-        state.getEventDiscardPile().addAll(state.getPendingEventOptions());
+        List<String> unselectedCardIds = new ArrayList<>(state.getPendingEventOptions());
+        unselectedCardIds.remove(optionIndex);
+
+        state.getEventDiscardPile().add(selectedCardId);
+        returnUnselectedCardsToDrawPile(state, unselectedCardIds);
         state.getPendingEventOptions().clear();
         state.setLastEventResult(resolution);
         state.setCurrentPhase(GamePhase.REFILL_CARDS);
@@ -156,6 +163,8 @@ public class EventService {
                 applyHarvestLossEffect(state, resolution, plantationSize, effect);
             } else if (effect.getType() == EventEffectType.APPLE_PRICE_MODIFIER_DELTA) {
                 applyApplePriceModifierDelta(state, resolution, effect);
+            } else if (effect.getType() == EventEffectType.PRODUCTION_CARD_COST_DELTA) {
+                applyProductionCardCostDelta(state, resolution, effect);
             }
         }
 
@@ -231,6 +240,23 @@ public class EventService {
         resolution.addEffect(formatApplePriceModifierEffect(modifierDelta));
     }
 
+    private void applyProductionCardCostDelta(GameState state, EventResolution resolution, EventEffectDef effect) {
+        int modifierDelta = effect.getAmount() == null ? 0 : effect.getAmount();
+        List<String> targetCardIds = resolveTargetCardIds(effect);
+
+        if (modifierDelta == 0 || targetCardIds.isEmpty()) {
+            return;
+        }
+
+        for (String cardId : targetCardIds) {
+            int currentModifier = state.getProductionCardCostModifiers().getOrDefault(cardId, 0);
+            state.getProductionCardCostModifiers().put(cardId, currentModifier + modifierDelta);
+        }
+
+        resolution.setProductionCardCostChange(resolution.getProductionCardCostChange() + modifierDelta);
+        resolution.addEffect(formatProductionCardCostEffect(targetCardIds, modifierDelta));
+    }
+
     private void reloadDiscardIntoDrawPile(GameState state) {
         if (state.getEventDiscardPile().isEmpty()) {
             return;
@@ -239,6 +265,15 @@ public class EventService {
         Collections.shuffle(state.getEventDiscardPile(), random);
         state.getEventDrawPile().addAll(state.getEventDiscardPile());
         state.getEventDiscardPile().clear();
+    }
+
+    private void returnUnselectedCardsToDrawPile(GameState state, List<String> unselectedCardIds) {
+        if (unselectedCardIds.isEmpty()) {
+            return;
+        }
+
+        Collections.shuffle(unselectedCardIds, random);
+        state.getEventDrawPile().addAll(unselectedCardIds);
     }
 
     private void requireDrawEventPhase(GameState state) {
@@ -258,5 +293,37 @@ public class EventService {
 
     private String formatMoneyEffectByFarmingMode(int moneyDelta, FarmingMode farmingMode) {
         return formatMoneyEffect(moneyDelta) + " (" + farmingMode.name().toLowerCase() + " farming)";
+    }
+
+    private String formatProductionCardCostEffect(List<String> targetCardIds, int modifierDelta) {
+        String sign = modifierDelta >= 0 ? "+" : "";
+
+        if (ProductionCardIds.containsWaterManagementCard(targetCardIds)) {
+            return "Water Management costs " + sign + modifierDelta + " money from now on";
+        }
+
+        if (ProductionCardIds.containsShadeNetCard(targetCardIds)) {
+            return "Shade Nets cost " + sign + modifierDelta + " money from now on";
+        }
+
+        if (targetCardIds.size() == 1) {
+            return "Production card " + targetCardIds.get(0) + " costs " + sign + modifierDelta + " money from now on";
+        }
+
+        return "Selected production cards cost " + sign + modifierDelta + " money from now on";
+    }
+
+    private List<String> resolveTargetCardIds(EventEffectDef effect) {
+        Set<String> resolvedIds = new LinkedHashSet<>();
+
+        if (effect.getTargetCardIds() != null) {
+            resolvedIds.addAll(effect.getTargetCardIds());
+        }
+
+        if (effect.getTargetCardGroup() != null && !effect.getTargetCardGroup().isBlank()) {
+            resolvedIds.addAll(ProductionCardIds.resolveGroup(effect.getTargetCardGroup()));
+        }
+
+        return new ArrayList<>(resolvedIds);
     }
 }
