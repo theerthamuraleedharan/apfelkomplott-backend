@@ -107,6 +107,39 @@ Important application settings are defined in `src/main/resources/application.pr
 - Application name: `apfelkomplott`
 - Server port: `8081`
 
+## PostgreSQL Setup
+
+The project now includes Spring Data JPA and PostgreSQL support, but it is kept behind a Spring profile so local development does not immediately depend on a running database.
+
+To run with PostgreSQL enabled:
+
+### Windows
+
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=postgres"
+```
+
+### macOS / Linux
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
+```
+
+Default PostgreSQL connection values are defined in `src/main/resources/application-postgres.properties`:
+
+- Database: `apfelkomplott`
+- Username: `postgres`
+- Password: `postgres`
+- URL: `jdbc:postgresql://localhost:5432/apfelkomplott`
+
+You can override them with environment variables:
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+
+This is the infrastructure step only. The current game state is still stored in memory and should be migrated to persisted entities next for real multiplayer support.
+
 ## Notes for Submission
 
 - The backend currently allows cross-origin requests from `http://localhost:5173`, which suggests it is intended to work with a frontend running there.
