@@ -1,7 +1,7 @@
 [
 {
     "id": "ST_FAST_GROWTH",
-    "name": "Faster Growth -1",
+    "name": "Faster Growth",
     "deck": "SHORT_TERM",
     "category": "Soil",
     "cost": { "fixed": 5 },
@@ -13,7 +13,7 @@
 
   {
     "id": "ST_FAST_GROWTH_FERTILIZER",
-    "name": "Production Plan-2",
+    "name": "Production Plan",
     "deck": "SHORT_TERM",
     "category": "Faster growth due to short-term increased fertilization. Accelerates growth, but has an impact on the health of the tree environment",
     "cost": { "fixed": 5 },
@@ -26,7 +26,7 @@
 
   {
     "id": "ST_EARLY_HARVEST",
-    "name": "Production Plant -3",
+    "name": "Production Plant",
     "deck": "SHORT_TERM",
     "category": "Other variety allows an early harvest: Can increase the harvest quantity, but affects the quality, allergy potential and the taste of the fruit",
     "cost": { "fixed": 10 },
@@ -40,7 +40,7 @@
 
   {
     "id": "ST_PRICE_REDUCTION_SALES_REVENUE",
-    "name": "Production Plant-4",
+    "name": "Production Plant",
     "deck": "SHORT_TERM",
     "category": "Price reduction:Increases sales but reduces revenue",
     "cost": { "fixed": 5 },
@@ -53,7 +53,7 @@
 
   {
     "id": "ST_MORE_INTENSIVE_IRRIGATION_REVENUE",
-    "name": "Irrigation-5",
+    "name": "Irrigation",
     "deck": "SHORT_TERM",
     "category": "More Intensive irrigation:Short-term over irrigation can meet water requirements, but carries the risk of root damage and soil compensation",
     "cost": { "fixed": 5 },
@@ -66,7 +66,7 @@
 
   {
     "id": "ST_USE_HERBICIDES",
-    "name": "Plant Protection-6",
+    "name": "Plant Protection",
     "deck": "SHORT_TERM",
     "category": "One time use of herbicides as plant protection agents. The short-term use of herbicides can quickly suppress the weeds, but has long-term effects on soil health.",
     "cost": { "fixed": 5 },
@@ -79,7 +79,7 @@
 
   {
     "id": "ST_REMOVAL_BENEFICIAL_INSECTS",
-    "name": "Plant Protection-7",
+    "name": "Plant Protection",
     "deck": "SHORT_TERM",
     "category": "Early removal of beneficial insects. The removal of insects that eat pests can solve term, but has a negative impact on the ecologicak balance",
     "cost": { "fixed": 5 },
@@ -91,7 +91,7 @@
   },
   {
     "id": "ST_FASTER_HARVESTING_METHOD",
-    "name": "Plant Protection-9",
+    "name": "Plant Protection",
     "deck": "SHORT_TERM",
     "category": "Faster harvesting methods: The use of faster harvesting methods can increase harvesting capacity in the short term, but can cause damage to the fruits",
     "cost": { "fixed": 5 },
@@ -131,7 +131,7 @@
 
   {
     "id": "ST_OPTIMIZATION_OF_HARVESTING_TIME",
-    "name": "Production Company-9",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "Optimization of harvesting time for maximum maturity",
     "cost": { "fixed": 15 },
@@ -145,7 +145,7 @@
 
   {
     "id": "ST_SOCIAL_MEDIA",
-    "name": "Production Company-10",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "New distribution channels: online marketing media",
     "cost": { "fixed": 5 },
@@ -158,7 +158,7 @@
 
   {
     "id": "ST_SELF_PICKING",
-    "name": "Man Power-11",
+    "name": "Man Power",
     "deck": "SHORT_TERM",
     "category": "Setting up self-picking and adventure tours for customers",
     "cost": { "fixed": 15 },
@@ -171,7 +171,7 @@
 
   {
     "id": "ST_APPLE_BASED_PRODUCTS",
-    "name": "Production Company-12",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "Developing Apple based products such as cider or Apple sauce.",
     "cost": { "fixed": 10 },
@@ -187,7 +187,7 @@
 
   {
     "id": "ST_USE_SHADE_NETS",
-    "name": "Production Company-13",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "Use of shade nets in extreme weather conditions.",
     "cost": { "fixed": 10 },
@@ -200,7 +200,7 @@
 
   {
     "id": "ST_USE_FENCES_OR_DETERRENCE",
-    "name": "Plant protection-14",
+    "name": "Plant protection",
     "deck": "SHORT_TERM",
     "category": "Protection against game damage by fences or deterrence methods.",
     "cost": { "fixed": 15 },
@@ -212,7 +212,7 @@
   },
   {
     "id": "ST_TEMPORARY_EMPLOYMENT_AGENCIES",
-    "name": "Manpower-15",
+    "name": "Manpower",
     "deck": "SHORT_TERM",
     "category": "Cooperation with temporary employment agencies.",
     "cost": { "fixed": 5 },
@@ -227,7 +227,7 @@
   },
   {
     "id": "ST_CULTIVATION_OF_GREEN_FERTILIZER",
-    "name": "Production Company-16",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "Cultivation of green fertilizer plants for soil improvement.",
     "cost": { "fixed": 10 },
@@ -239,7 +239,7 @@
   },
   {
     "id": "ST_TREE_PRUNING_TECHNIQUES",
-    "name": "Production Company-17",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "Improvement of tree pruning techniques.",
     "cost": { "fixed": 10 },
@@ -251,7 +251,7 @@
   },
   {
     "id": "ST_REMOVAL_OF_DAMAGED_FRUIT",
-    "name": "Production Company-18",
+    "name": "Production Company",
     "deck": "SHORT_TERM",
     "category": "Early removal of damaged fruit. Also protects against pest infestation, eg: by wild animals that eat the tress",
     "cost": { "fixed": 5 },
@@ -287,7 +287,7 @@
 
   {
     "id": "LT_PRODUCTION_METHOD",
-    "name": "Production Method -20",
+    "name": "Production Method",
     "deck": "LONG_TERM",
     "category": "Effects depend on the selected farming mode.",
     "cost": { "fixed": 10 },
@@ -307,7 +307,7 @@
 
   {
     "id": "LT_WORKFORCE_21",
-    "name": "Workforce -21",
+    "name": "Workforce",
     "deck": "LONG_TERM",
     "category": "Investment in workplace design, training, and further development of employees.",
     "cost": { "fixed": 10 },
@@ -323,7 +323,7 @@
 
   {
     "id": "LT_CROP_VARIETY_22",
-    "name": "Production Business -22",
+    "name": "Production Business",
     "deck": "LONG_TERM",
     "category": "Currently uses the 1-3 crop branch because the game only supports apple production for now.",
     "cost": { "fixed": 20 },
@@ -339,7 +339,7 @@
 
   {
     "id": "LT_NO_PESTICIDES_23",
-    "name": "Plant Protection -23",
+    "name": "Plant Protection",
     "deck": "LONG_TERM",
     "category": "Complete avoidance of pesticides.",
     "cost": { "fixed": 15 },
@@ -354,7 +354,7 @@
 
   {
     "id": "LT_EGG_PRODUCTION_24",
-    "name": "Business -24",
+    "name": "Business",
     "deck": "LONG_TERM",
     "category": "Egg production between the tree rows.",
     "cost": { "fixed": 15 },
@@ -370,7 +370,7 @@
 
   {
     "id": "LT_COLD_STORAGE_25",
-    "name": "Operation -25",
+    "name": "Operation",
     "deck": "LONG_TERM",
     "category": "Installation of an in-house cold storage facility.",
     "cost": { "fixed": 10 },
@@ -387,7 +387,7 @@
 
   {
     "id": "LT_BEEKEEPING_26",
-    "name": "Operation -26",
+    "name": "Operation",
     "deck": "LONG_TERM",
     "category": "Establishment of a beekeeping business next to the apple plantation.",
     "cost": { "fixed": 10 },
@@ -403,7 +403,7 @@
 
   {
     "id": "LT_HARVEST_MACHINE_27",
-    "name": "Workforce -27",
+    "name": "Workforce",
     "deck": "LONG_TERM",
     "category": "Purchase of a self-driving harvest machine for fruit collection.",
     "cost": { "fixed": 5 },
@@ -419,7 +419,7 @@
 
   {
     "id": "LT_EMPLOYMENT_SUPPORT_28",
-    "name": "Workforce -28",
+    "name": "Workforce",
     "deck": "LONG_TERM",
     "category": "Cooperation with local employment support for retraining and vocational funding.",
     "cost": { "fixed": 5 },
@@ -435,7 +435,7 @@
 
   {
     "id": "LT_SEASONAL_WORKERS_29",
-    "name": "Workforce -29",
+    "name": "Workforce",
     "deck": "LONG_TERM",
     "category": "Hiring seasonal workers.",
     "cost": { "fixed": 5 },
@@ -451,7 +451,7 @@
 
   {
     "id": "LT_TOURISM_COOPERATION_30",
-    "name": "Production Business -30",
+    "name": "Production Business",
     "deck": "LONG_TERM",
     "category": "Cooperation with local tourism for marketing, farm festivals, and purchase agreements.",
     "cost": { "fixed": 5 },
@@ -466,7 +466,7 @@
 
   {
     "id": "LT_WATER_MANAGEMENT_31",
-    "name": "Water Management -31",
+    "name": "Water Management",
     "deck": "LONG_TERM",
     "category": "Installation of a private well with protected water source and on-site treatment.",
     "cost": {

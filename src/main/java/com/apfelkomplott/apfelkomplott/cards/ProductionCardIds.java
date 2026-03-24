@@ -6,9 +6,9 @@ public final class ProductionCardIds {
     public static final String GROUP_WATER_MANAGEMENT = "WATER_MANAGEMENT";
     public static final String GROUP_SHADE_NETS = "SHADE_NETS";
 
-    public static final String WATER_MANAGEMENT = "LT_WATER_MANAGEMENT_31";
-    public static final String WATER_MANAGEMENT_PRIVATE_WELL = "LT_WATER_MANAGEMENT_PRIVATE_WELL_32";
-    public static final String WATER_MANAGEMENT_ECO = "LT_WATER_MANAGEMENT_ECO_35";
+    public static final String WATER_MANAGEMENT = "LT_WATER_MANAGEMENT";
+    public static final String WATER_MANAGEMENT_PRIVATE_WELL = "LT_WATER_MANAGEMENT_PRIVATE_WELL";
+    public static final String WATER_MANAGEMENT_ECO = "LT_WATER_MANAGEMENT_ECO";
     public static final String SHADE_NETS = "ST_USE_SHADE_NETS";
 
     public static final Set<String> WATER_MANAGEMENT_IDS = Set.of(
