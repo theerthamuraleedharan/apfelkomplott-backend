@@ -106,13 +106,3 @@ Important application settings are defined in `src/main/resources/application.pr
 
 - Application name: `apfelkomplott`
 - Server port: `8081`
-
-## Notes for Submission
-
-- The backend currently allows cross-origin requests from `http://localhost:5173`, which suggests it is intended to work with a frontend running there.
-- The project appears to keep game state in memory during runtime.
-- If you submit this project to a professor, include this repository with the `README.md` so they can run it directly.
-
-## Author
-
-Add your name, student ID, course name, and submission date here before sharing.
