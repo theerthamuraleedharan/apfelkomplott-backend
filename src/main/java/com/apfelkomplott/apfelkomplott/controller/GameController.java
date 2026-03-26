@@ -4,8 +4,10 @@ import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
 import com.apfelkomplott.apfelkomplott.controller.dto.BuyProductionRequest;
 import com.apfelkomplott.apfelkomplott.controller.dto.EventSelectionRequest;
+import com.apfelkomplott.apfelkomplott.controller.dto.GameGuideDto;
 import com.apfelkomplott.apfelkomplott.controller.dto.HiddenEventCardDto;
 import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentActionRequest;
+import com.apfelkomplott.apfelkomplott.controller.dto.PhaseHelpDto;
 import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
@@ -25,6 +27,7 @@ public class GameController {
     private final GameStateService gameStateService;
     private final ProductionCardService productionCardService;
     private final EventService eventService;
+    private final GameHelpService gameHelpService;
 
     public GameController(
             GameInitializer gameInitializer,
@@ -32,13 +35,15 @@ public class GameController {
             InvestmentService investmentService,
             GameStateService gameStateService,
             ProductionCardService productionCardService,
-            EventService eventService) {
+            EventService eventService,
+            GameHelpService gameHelpService) {
         this.gameInitializer = gameInitializer;
         this.roundEngine = roundEngine;
         this.investmentService = investmentService;
         this.gameStateService = gameStateService;
         this.productionCardService = productionCardService;
         this.eventService = eventService;
+        this.gameHelpService = gameHelpService;
     }
 
     @PostMapping("/start")
@@ -68,6 +73,16 @@ public class GameController {
     public GameState getState() {
         // Expose the current saved game state to the frontend.
         return requireState();
+    }
+
+    @GetMapping("/help")
+    public GameGuideDto getGuide() {
+        return gameHelpService.buildGuide();
+    }
+
+    @GetMapping("/help/current-phase")
+    public PhaseHelpDto getCurrentPhaseHelp() {
+        return gameHelpService.buildCurrentPhaseHelp(gameStateService.getState());
     }
 
     @PostMapping("/next-phase")

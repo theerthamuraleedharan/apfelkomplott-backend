@@ -68,6 +68,12 @@ Base path:
 - `GET /game/state`  
   Returns the current game state.
 
+- `GET /game/help`  
+  Returns a structured "how to play" guide for onboarding popups or help screens.
+
+- `GET /game/help/current-phase`  
+  Returns player-friendly help text for the current game phase.
+
 - `POST /game/next-phase`  
   Advances the game to the next phase.
 
