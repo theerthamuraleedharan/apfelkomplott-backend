@@ -93,6 +93,7 @@ public class ScoringService {
 
         if (score.isGameOver()) {
             state.setGameOver(true);
+            state.setGameResult(GameResult.LOSS);
         }
 
         // set totals into existing result object

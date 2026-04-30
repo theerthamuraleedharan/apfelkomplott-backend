@@ -12,6 +12,7 @@ import com.apfelkomplott.apfelkomplott.engine.RoundEngine;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.service.*;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -107,7 +108,7 @@ public class GameController {
     }
 
     @PostMapping("/event/select")
-    public GameState selectEvent(@RequestBody EventSelectionRequest request) {
+    public GameState selectEvent(@Valid @RequestBody EventSelectionRequest request) {
         GameState state = requireState();
         eventService.selectEvent(state, request.getOptionIndex());
         return gameStateService.updateState(state);
@@ -119,7 +120,7 @@ public class GameController {
     // ===============================
 
     @PostMapping("/invest")
-    public GameState invest(@RequestBody InvestmentActionRequest request) {
+    public GameState invest(@Valid @RequestBody InvestmentActionRequest request) {
 
         GameState state = requireState();
 
@@ -133,7 +134,7 @@ public class GameController {
     }
 
     @PostMapping("/invest/production")
-    public GameState buyProduction(@RequestBody BuyProductionRequest req) {
+    public GameState buyProduction(@Valid @RequestBody BuyProductionRequest req) {
         GameState state = requireState();
         // Buy a production card from the current market, then store the updated game state.
         productionCardService.buyCard(state, req.getCardId());

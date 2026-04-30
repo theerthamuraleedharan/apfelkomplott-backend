@@ -2,6 +2,7 @@ package com.apfelkomplott.apfelkomplott.engine;
 
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
+import com.apfelkomplott.apfelkomplott.entity.GameResult;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.service.*;
@@ -47,6 +48,7 @@ public class RoundEngine {
             case MOVE_MARKER -> {
                 if (state.getCurrentRound() >= 15) {
                     state.setGameOver(true);
+                    state.setGameResult(GameResult.WIN);
                     return;
                 }
                 state.setCurrentPhase(GamePhase.DRAW_EVENT);

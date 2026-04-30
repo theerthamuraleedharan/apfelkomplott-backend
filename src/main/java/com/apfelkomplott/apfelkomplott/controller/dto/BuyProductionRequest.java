@@ -1,7 +1,10 @@
 package com.apfelkomplott.apfelkomplott.controller.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class BuyProductionRequest {
 
+    @NotBlank(message = "cardId is required.")
     private String cardId;
 
     public BuyProductionRequest() {

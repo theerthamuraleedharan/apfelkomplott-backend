@@ -39,7 +39,7 @@ public class InvestmentService {
     // ===== Actions =====
     private void buySeedling(GameState state) {
         ensureFieldHasCapacity(state);
-        if (state.getMoney() < 3) return;
+        ensureEnoughMoney(state, 3, "Not enough money to buy a seedling.");
 
         Tree tree = new Tree();
         tree.setType(TreeType.SEEDLING);
@@ -51,7 +51,7 @@ public class InvestmentService {
 
     private void buyPreGrownTree(GameState state) {
         ensureFieldHasCapacity(state);
-        if (state.getMoney() < 4) return;
+        ensureEnoughMoney(state, 4, "Not enough money to buy a pre-grown tree.");
 
         Tree tree = new Tree();
         tree.setType(TreeType.PRE_GROWN);
@@ -62,14 +62,14 @@ public class InvestmentService {
     }
 
     private void buyCrate(GameState state) {
-        if (state.getMoney() < 3) return;
+        ensureEnoughMoney(state, 3, "Not enough money to buy a crate.");
 
         state.getPlantation().getCrates().add(new Crate());
         state.setMoney(state.getMoney() - 3);
     }
 
     private void buySalesStand(GameState state) {
-        if (state.getMoney() < 3) return;
+        ensureEnoughMoney(state, 3, "Not enough money to buy a sales stand.");
 
         state.getPlantation().getSalesStands().add(new SalesStand());
         state.setMoney(state.getMoney() - 3);
@@ -79,6 +79,12 @@ public class InvestmentService {
         int currentTreeCount = state.getPlantation().getTrees().size();
         if (currentTreeCount >= MAX_TREES_PER_FIELD) {
             throw new IllegalStateException("A field can contain at most 8 plants.");
+        }
+    }
+
+    private void ensureEnoughMoney(GameState state, int requiredAmount, String message) {
+        if (state.getMoney() < requiredAmount) {
+            throw new IllegalStateException(message);
         }
     }
 }
