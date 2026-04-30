@@ -4,6 +4,7 @@ import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.cards.ActiveProductionCard;
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
+import com.apfelkomplott.apfelkomplott.entity.GameResult;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.repository.EventCardRepository;
@@ -62,7 +63,22 @@ class RoundEngineTests {
         engine.runNextPhase(state);
 
         assertTrue(state.isGameOver());
+        assertEquals(GameResult.WIN, state.getGameResult());
         assertEquals(GamePhase.MOVE_MARKER, state.getCurrentPhase());
+    }
+
+    @Test
+    void alreadyLostGameDoesNotGetConvertedIntoWinAtRoundFifteen() {
+        GameState state = new GameState();
+        state.setCurrentPhase(GamePhase.MOVE_MARKER);
+        state.setCurrentRound(15);
+        state.setGameOver(true);
+        state.setGameResult(GameResult.LOSS);
+
+        engine.runNextPhase(state);
+
+        assertTrue(state.isGameOver());
+        assertEquals(GameResult.LOSS, state.getGameResult());
     }
 
     @Test

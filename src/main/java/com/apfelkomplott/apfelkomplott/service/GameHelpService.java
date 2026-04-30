@@ -15,7 +15,7 @@ public class GameHelpService {
         GameGuideDto guide = new GameGuideDto();
         guide.setTitle("How To Play Apfelkomplott");
         guide.setOverview("You manage an apple plantation over 15 rounds. Each round brings events, selling, harvesting, investments, and card effects that shape your farm.");
-        guide.setWinCondition("Reach the end of round 15 without Economy, Environment, or Health dropping to -3.");
+        guide.setWinCondition("Win by reaching the end of round 15 without Economy, Environment, or Health dropping to -3. Lose immediately if any of the three score tracks falls to -3.");
         guide.setSetupSteps(List.of(
                 "Choose a farming mode to start a new game.",
                 "Check the current round, money, and your three score tracks: Economy, Environment, and Health.",

@@ -6,6 +6,7 @@ import com.apfelkomplott.apfelkomplott.Enum.PlantationSize;
 import com.apfelkomplott.apfelkomplott.cards.ActiveProductionCard;
 import com.apfelkomplott.apfelkomplott.cards.EffectDef;
 import com.apfelkomplott.apfelkomplott.cards.ProductionCardDef;
+import com.apfelkomplott.apfelkomplott.entity.GameResult;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
 import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.entity.ScoreTrack;
@@ -102,6 +103,7 @@ public class ProductionCardService {
 
     if (state.getScoreTrack().isGameOver()) {
         state.setGameOver(true);
+        state.setGameResult(GameResult.LOSS);
     }
 
     return result;
@@ -223,6 +225,7 @@ public class ProductionCardService {
 
     if (state.getScoreTrack().isGameOver()) {
         state.setGameOver(true);
+        state.setGameResult(GameResult.LOSS);
     }
     
 

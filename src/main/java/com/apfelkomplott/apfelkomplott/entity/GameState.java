@@ -34,6 +34,7 @@ public class GameState {
     private EventResolution lastEventResult;
     private RoundEventImpact roundEventImpact = new RoundEventImpact();
     private Map<String, Integer> productionCardCostModifiers = new HashMap<>();
+    private GameResult gameResult;
 
     public List<ProductionCardDef> getMarket() {
         return market;
@@ -57,6 +58,7 @@ public class GameState {
         this.activeProductionCards = new ArrayList<>();
 
         this.gameOver = false;
+        this.gameResult = GameResult.IN_PROGRESS;
     }
 
     public int getCurrentRound() {
@@ -101,6 +103,14 @@ public class GameState {
 
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public GameResult getGameResult() {
+        return gameResult;
+    }
+
+    public void setGameResult(GameResult gameResult) {
+        this.gameResult = gameResult;
     }
 
     public SellResult getLastSellResult() {
