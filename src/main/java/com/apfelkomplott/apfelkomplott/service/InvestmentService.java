@@ -38,7 +38,7 @@ public class InvestmentService {
 
     // ===== Actions =====
     private void buySeedling(GameState state) {
-        ensureFieldHasCapacity(state);
+        ensureFieldHasCapacity(state, 1);
         ensureEnoughMoney(state, 3, "Not enough money to buy a seedling.");
 
         Tree tree = new Tree();
@@ -50,7 +50,7 @@ public class InvestmentService {
     }
 
     private void buyPreGrownTree(GameState state) {
-        ensureFieldHasCapacity(state);
+        ensureFieldHasCapacity(state, 2);
         ensureEnoughMoney(state, 4, "Not enough money to buy a pre-grown tree.");
 
         Tree tree = new Tree();
@@ -75,9 +75,12 @@ public class InvestmentService {
         state.setMoney(state.getMoney() - 3);
     }
 
-    private void ensureFieldHasCapacity(GameState state) {
-        int currentTreeCount = state.getPlantation().getTrees().size();
-        if (currentTreeCount >= MAX_TREES_PER_FIELD) {
+    private void ensureFieldHasCapacity(GameState state, int fieldPosition) {
+        long treesInField = state.getPlantation().getTrees().stream()
+                .filter(tree -> tree.getFieldPosition() == fieldPosition)
+                .count();
+
+        if (treesInField >= MAX_TREES_PER_FIELD) {
             throw new IllegalStateException("A field can contain at most 8 plants.");
         }
     }
