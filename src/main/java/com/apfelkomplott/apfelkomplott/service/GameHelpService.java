@@ -14,39 +14,38 @@ public class GameHelpService {
     public GameGuideDto buildGuide() {
         GameGuideDto guide = new GameGuideDto();
         guide.setTitle("How To Play Apfelkomplott");
-        guide.setOverview("You manage an apple plantation over 15 rounds. Each round brings events, selling, harvesting, investments, and card effects that shape your farm.");
-        guide.setWinCondition("Win by reaching the end of round 15 without Economy, Environment, or Health dropping to -3. Lose immediately if any of the three score tracks falls to -3.");
+        guide.setOverview("You manage an apple plantation over 15 rounds. Each round brings events, transport, selling, harvesting, investments that shape your farm.");
+        guide.setWinCondition("Win by reaching the end of round 15 without Economy, Environment, or Health dropping to -3. Lose immediately if any of the three scores falls to -3.");
         guide.setSetupSteps(List.of(
-                "Choose a farming mode to start a new game.",
-                "Check the current round, money, and your three score tracks: Economy, Environment, and Health.",
-                "Look at the market cards and event phase before advancing."
+                "An initial investment of 50 Coins is provided at the start of the game.",
+                "Choose a farming mode to start a new game(Conventionalo or Organic).",
+                "The game starts with an empty plantation in round 1 and lasts up to 15 rounds. Players grow the plantation by drawing event cards and buying seeds, crates, and production cards."
         ));
         guide.setBeginnerTips(List.of(
                 "Do not buy every card you see. Keep enough money for future rounds.",
                 "Short-term cards help immediately, while long-term cards shape future scoring.",
-                "Watch all three score tracks, because the game can end early if one of them falls too low.",
-                "When a scoring popup appears, read it before continuing because it explains what just changed."
+                "Watch all three score tracks, because the game can end early if one of them falls too low."
         ));
         guide.setPhases(List.of(
                 phase(GamePhase.MOVE_MARKER, "Start Of Round",
                         "Reset the round and get ready for the next sequence.",
                         "Advance to begin the event step for the new round.",
                         "This clears last-round popups and prepares the next turn."),
-                phase(GamePhase.DRAW_EVENT, "Event Choice",
+                phase(GamePhase.DRAW_EVENT, "Draw An Event",
                         "Draw event options and choose what happens this round.",
                         "Open the event choices and select one option.",
                         "Events can change money, harvest, apple prices, or future card costs."),
-                phase(GamePhase.REFILL_CARDS, "Refill Market",
-                        "Prepare the production card market.",
-                        "Review the new market row after the refill.",
+                phase(GamePhase.REFILL_CARDS, "Refill Production Cards",
+                        "Production cards are replaced in this step if they were used in the last round. The deck is always replenished to five cards.",
+                        "Review the new production cards after the refill.",
                         "The available short-term and long-term cards shape your next investment decisions."),
                 phase(GamePhase.SELL, "Sell Apples",
-                        "Sell apples already placed in sales stands.",
+                        "Sell apples already placed in sales stands. 1 apple sells for 1 Coin",
                         "Advance to convert ready apples into money.",
                         "This is your direct cash income for the round."),
                 phase(GamePhase.DELIVER, "Deliver Apples",
-                        "Move apples from transport toward sales stands.",
-                        "Advance after checking whether your sales stands have space.",
+                        "Move apples from transport toward sales stands",
+                        "Advance after checking whether your sales stands have space. 1",
                         "Delivery helps turn harvested apples into future income."),
                 phase(GamePhase.HARVEST, "Harvest",
                         "Harvest apples from mature trees.",
