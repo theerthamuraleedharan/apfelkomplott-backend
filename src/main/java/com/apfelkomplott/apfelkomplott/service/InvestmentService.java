@@ -4,30 +4,34 @@ import com.apfelkomplott.apfelkomplott.controller.dto.InvestmentType;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
+/**
+ * Handles player investments during the investment phase.
+ */
 @Service
 public class InvestmentService {
 
     private static final int MAX_TREES_PER_FIELD = 8;
 
+    /**
+     * Executes one investment action and deducts the corresponding money.
+     *
+     * @param state current game state
+     * @param type investment action selected by the player
+     * @throws IllegalStateException if the action is not allowed in the current
+     *                               phase, the player has too little money, or a
+     *                               target field is full
+     */
     public void invest(GameState state, InvestmentType type) {
 
         if (state.isGameOver()) return;
 
-        // 🚫 Rule 1: Only allowed in INVEST phase
+        // Investments are only allowed during the INVEST phase.
         if (state.getCurrentPhase() != GamePhase.INVEST) {
             throw new IllegalStateException(
                     "Can only invest during INVEST phase"
             );
         }
 
-        // 🚫 Rule 2: Round 1 restrictions (PDF rule)
-        /*if (state.getCurrentRound() == 1 && isTreeOrLogistics(type)) {
-            throw new IllegalStateException(
-                    "Trees and logistics cannot be bought in Round 1"
-            );
-        }*/
-
-        // ✅ Execute investment
         switch (type) {
             case BUY_SEEDLING -> buySeedling(state);
             case BUY_PRE_GROWN_TREE -> buyPreGrownTree(state);
@@ -36,7 +40,6 @@ public class InvestmentService {
         }
     }
 
-    // ===== Actions =====
     private void buySeedling(GameState state) {
         ensureFieldHasCapacity(state, 1);
         ensureEnoughMoney(state, 3, "Not enough money to buy a seedling.");

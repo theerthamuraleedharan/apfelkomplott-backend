@@ -5,9 +5,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Moves harvested apples from transport crates into sales stands during the
+ * delivery phase.
+ */
 @Service
 public class DeliveryService {
 
+    /**
+     * Fills sales stands with apples currently stored in transport crates.
+     *
+     * @param state current game state
+     */
     public void deliver(GameState state) {
 
         Plantation plantation = state.getPlantation();

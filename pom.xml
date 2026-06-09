@@ -95,6 +95,19 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.11.2</version>
+				<configuration>
+					<source>${java.version}</source>
+					<show>protected</show>
+					<nohelp>true</nohelp>
+					<doclint>all,-missing</doclint>
+					<doctitle>Apfelkomplott Game API Documentation</doctitle>
+					<windowtitle>Apfelkomplott Game API Documentation</windowtitle>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

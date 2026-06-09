@@ -8,6 +8,10 @@ import com.apfelkomplott.apfelkomplott.entity.ScoreResult;
 import com.apfelkomplott.apfelkomplott.service.*;
 import org.springframework.stereotype.Component;
 
+/**
+ * Coordinates the ordered phases of a game round and delegates rule-specific
+ * work to the corresponding services.
+ */
 @Component
 public class RoundEngine {
 
@@ -39,6 +43,14 @@ public class RoundEngine {
         this.productionCardService = productionCardService;
     }
 
+    /**
+     * Advances the supplied game state to the next phase.
+     *
+     * <p>Some phases intentionally stop after calculating a result so that the
+     * frontend can display a popup before the player continues.</p>
+     *
+     * @param state mutable game state to progress
+     */
     public void runNextPhase(GameState state) {
 
         if (state.isGameOver()) return;

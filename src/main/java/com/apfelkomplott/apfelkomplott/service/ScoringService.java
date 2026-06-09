@@ -3,9 +3,19 @@ package com.apfelkomplott.apfelkomplott.service;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
+/**
+ * Applies intermediate scoring rules that evaluate the player's logistics
+ * setup during the game.
+ */
 @Service
 public class ScoringService {
 
+    /**
+     * Scores wasted apples, empty logistics, and perfect balance bonuses.
+     *
+     * @param state current game state
+     * @return score changes and explanation strings for the UI
+     */
     public ScoreResult applyIntermediateScoring(GameState state) {
 
         if (state.getCurrentRound() < 3) {

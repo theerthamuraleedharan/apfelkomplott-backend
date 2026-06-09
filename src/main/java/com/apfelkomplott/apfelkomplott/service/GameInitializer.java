@@ -3,6 +3,9 @@ package com.apfelkomplott.apfelkomplott.service;
 import com.apfelkomplott.apfelkomplott.entity.*;
 import org.springframework.stereotype.Service;
 
+/**
+ * Creates starting game states for normal gameplay and demonstration flows.
+ */
 @Service
 public class GameInitializer {
 
@@ -12,13 +15,20 @@ public class GameInitializer {
         this.gameStateService = gameStateService;
     }
 
+    /**
+     * Creates and stores an empty new game state.
+     *
+     * @return initialized game state
+     */
     public GameState createNewGame() {
         GameState state = new GameState();
         return gameStateService.createNewGame(state);
     }
 
     /**
-     * Demo game with 1 starting tree (for UI testing)
+     * Creates a demo game with one starting tree for quick UI testing.
+     *
+     * @return demo game state
      */
     public GameState createDemoGame() {
         GameState state = new GameState();

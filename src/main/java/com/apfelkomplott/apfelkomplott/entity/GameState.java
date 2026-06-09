@@ -21,7 +21,6 @@ public class GameState {
     private ScoreResult lastScoreResult;
     private ScoreResult productionCardFinalScoreResult;
     private FarmingMode farmingMode;
-    private List<ProductionCard> activeProductionCards;
     private List<String> marketCardIds = new ArrayList<>();
     private List<ActiveProductionCard> activeLongTerm = new ArrayList<>();
     private List<String> shortTermUsedThisRound = new ArrayList<>();
@@ -54,8 +53,6 @@ public class GameState {
 
         this.scoreTrack = new ScoreTrack();
         this.plantation = new Plantation();
-
-        this.activeProductionCards = new ArrayList<>();
 
         this.gameOver = false;
         this.gameResult = GameResult.IN_PROGRESS;
@@ -91,10 +88,6 @@ public class GameState {
 
     public Plantation getPlantation() {
         return plantation;
-    }
-
-    public List<ProductionCard> getActiveProductionCards() {
-        return activeProductionCards;
     }
 
     public boolean isGameOver() {
@@ -139,10 +132,6 @@ public class GameState {
 
     public void setScoreTrack(ScoreTrack scoreTrack) {
         this.scoreTrack = scoreTrack;
-    }
-
-    public void setActiveProductionCards(List<ProductionCard> activeProductionCards) {
-        this.activeProductionCards = activeProductionCards;
     }
 
     public List<String> getMarketCardIds() {
