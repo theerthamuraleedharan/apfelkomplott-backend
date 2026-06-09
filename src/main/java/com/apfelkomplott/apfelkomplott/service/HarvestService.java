@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Applies the harvest phase by creating apples from mature trees and placing
+ * them into available transport crates.
+ */
 @Service
 public class HarvestService {
 
@@ -14,6 +18,15 @@ public class HarvestService {
         this.eventService = eventService;
     }
 
+    /**
+     * Harvests apples from mature trees in fields three to six.
+     *
+     * <p>If transport crates have no remaining capacity, the produced apples are
+     * marked as wasted. Temporary harvest-loss effects from event cards are
+     * consumed during this operation.</p>
+     *
+     * @param state game state whose plantation should be harvested
+     */
     public void harvest(GameState state) {
         Plantation plantation = state.getPlantation();
         List<Tree> matureTrees = plantation.getTrees().stream()

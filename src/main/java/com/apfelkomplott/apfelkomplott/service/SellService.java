@@ -6,9 +6,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 
+/**
+ * Handles the selling phase by converting apples in sales stands into money.
+ */
 @Service
 public class SellService {
 
+    /**
+     * Sells every apple currently placed in a sales stand.
+     *
+     * @param state current game state
+     * @return number of sold apples and total money earned
+     */
     public SellResult sell(GameState state) {
 
         Plantation plantation = state.getPlantation();

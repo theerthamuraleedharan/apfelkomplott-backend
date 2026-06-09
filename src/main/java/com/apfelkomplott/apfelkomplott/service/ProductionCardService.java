@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Manages production-card decks, market refill, card purchases, and long-term
+ * card scoring.
+ */
 @Service
 public class ProductionCardService {
   // Special long-term card that converts the farm from conventional to organic.
@@ -27,6 +31,12 @@ public class ProductionCardService {
     this.repo = repo;
   }
 
+  /**
+   * Initializes the production-card draw pile and visible market if they are
+   * still empty.
+   *
+   * @param state game state whose production deck should be prepared
+   */
   public void initDeckAndMarket(GameState state) {
     if (!state.getProductionDrawPile().isEmpty()) return;
 
@@ -40,6 +50,17 @@ public class ProductionCardService {
     refreshMarketView(state);
   }
 
+  /**
+   * Buys a visible production card, deducts its cost, and applies or stores its
+   * effects depending on the card type.
+   *
+   * @param state current game state
+   * @param cardId identifier of a card currently visible in the market
+   * @return score result for the purchase; short-term effects are applied
+   *         silently in the current implementation
+   * @throws IllegalStateException if the card is unavailable, prerequisites are
+   *                               missing, or the player cannot afford it
+   */
   public ScoreResult buyCard(GameState state, String cardId) {
 
     if (!state.getMarketCardIds().contains(cardId)) {
@@ -199,6 +220,13 @@ public class ProductionCardService {
     }
 }
 
+  /**
+   * Applies score effects for all active long-term production cards in the
+   * current round.
+   *
+   * @param state current game state
+   * @return accumulated score changes and explanation strings for the UI
+   */
   public ScoreResult applyLongTermCardScoring(GameState state) {
     pruneExpiredActiveCards(state);
     int round = state.getCurrentRound();
@@ -310,6 +338,12 @@ public class ProductionCardService {
             .orElse(0);
   }
 
+  /**
+   * Refills the production-card market to five visible cards while keeping the
+   * intended mix of short-term and long-term cards when possible.
+   *
+   * @param state game state whose market should be refilled
+   */
   public void refillMarketToFive(GameState state) {
     boolean freshMarket = state.getMarketCardIds().stream().allMatch(Objects::isNull);
 

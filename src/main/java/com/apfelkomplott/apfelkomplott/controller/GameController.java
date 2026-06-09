@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Exposes the HTTP API used by the web frontend to start a game, advance game
+ * phases, buy cards, choose events, and inspect the current game state.
+ */
 @RestController
 @RequestMapping("/game")
 public class GameController {
@@ -47,6 +51,13 @@ public class GameController {
         this.gameHelpService = gameHelpService;
     }
 
+    /**
+     * Starts a new game with the selected farming mode and initializes both card
+     * decks before storing the state.
+     *
+     * @param mode initial farming mode chosen by the player
+     * @return initialized game state
+     */
     @PostMapping("/start")
     public GameState start(@RequestParam FarmingMode mode) {
         // Create a fresh game state with the selected farming mode before persisting it.
@@ -61,15 +72,11 @@ public class GameController {
     }
 
 
-    @PostMapping("/start-demo")
-    public GameState startDemoGame() {
-        // Seed the game with demo data for quicker manual testing.
-        GameState state = gameInitializer.createDemoGame();
-        productionCardService.initDeckAndMarket(state);
-        eventService.initDeck(state);
-        return gameStateService.createNewGame(state);
-    }
-
+    /**
+     * Returns the active game state.
+     *
+     * @return current game state
+     */
     @GetMapping("/state")
     public GameState getState() {
         // Expose the current saved game state to the frontend.
@@ -86,6 +93,12 @@ public class GameController {
         return gameHelpService.buildCurrentPhaseHelp(gameStateService.getState());
     }
 
+    /**
+     * Advances the game by one phase through the round engine and stores the
+     * updated state.
+     *
+     * @return updated game state, or the unchanged state if the game is over
+     */
     @PostMapping("/next-phase")
     public GameState nextPhase() {
 
@@ -107,6 +120,13 @@ public class GameController {
         return eventService.getHiddenOptions(state);
     }
 
+    /**
+     * Applies the selected hidden event card and moves the game into the next
+     * phase.
+     *
+     * @param request selected hidden event option
+     * @return updated game state after resolving the event
+     */
     @PostMapping("/event/select")
     public GameState selectEvent(@Valid @RequestBody EventSelectionRequest request) {
         GameState state = requireState();
@@ -119,6 +139,13 @@ public class GameController {
     // INVESTMENT
     // ===============================
 
+    /**
+     * Applies one investment action, such as buying a tree, crate, or sales
+     * stand.
+     *
+     * @param request investment action selected by the player
+     * @return updated game state
+     */
     @PostMapping("/invest")
     public GameState invest(@Valid @RequestBody InvestmentActionRequest request) {
 
@@ -133,6 +160,12 @@ public class GameController {
         return gameStateService.updateState(state);
     }
 
+    /**
+     * Buys a production card from the visible market row.
+     *
+     * @param req card purchase request containing the selected card id
+     * @return updated game state after the purchase
+     */
     @PostMapping("/invest/production")
     public GameState buyProduction(@Valid @RequestBody BuyProductionRequest req) {
         GameState state = requireState();

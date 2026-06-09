@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * Manages the event-card deck, hidden event choices, and temporary or permanent
+ * effects caused by selected event cards.
+ */
 @Service
 public class EventService {
 
@@ -32,6 +36,11 @@ public class EventService {
         this.repository = repository;
     }
 
+    /**
+     * Initializes and shuffles the event draw pile if it has not been prepared.
+     *
+     * @param state game state whose event deck should be initialized
+     */
     public void initDeck(GameState state) {
         if (!state.getEventDrawPile().isEmpty()) {
             return;
@@ -49,6 +58,12 @@ public class EventService {
         }
     }
 
+    /**
+     * Prepares the hidden event choices for the current draw-event phase.
+     *
+     * @param state current game state
+     * @throws IllegalStateException if the game is not in the draw-event phase
+     */
     public void prepareDrawIfNeeded(GameState state) {
         requireDrawEventPhase(state);
 
@@ -76,6 +91,13 @@ public class EventService {
         }
     }
 
+    /**
+     * Returns placeholder options for the frontend so that event cards remain
+     * hidden until the player selects one.
+     *
+     * @param state current game state
+     * @return hidden event choices represented by their option indexes
+     */
     public List<HiddenEventCardDto> getHiddenOptions(GameState state) {
         prepareDrawIfNeeded(state);
 
@@ -86,6 +108,14 @@ public class EventService {
         return options;
     }
 
+    /**
+     * Resolves the selected hidden event card and applies its effects.
+     *
+     * @param state current game state
+     * @param optionIndex zero-based index of the selected hidden option
+     * @return resolved event details for display in the UI
+     * @throws IllegalArgumentException if the selected option index is invalid
+     */
     public EventResolution selectEvent(GameState state, int optionIndex) {
         requireDrawEventPhase(state);
         prepareDrawIfNeeded(state);
@@ -110,6 +140,12 @@ public class EventService {
         return resolution;
     }
 
+    /**
+     * Classifies the plantation size based on the number of trees.
+     *
+     * @param state current game state
+     * @return plantation size used by event effects
+     */
     public PlantationSize resolvePlantationSize(GameState state) {
         int treeCount = state.getPlantation().getTrees().size();
 
@@ -124,6 +160,12 @@ public class EventService {
         return PlantationSize.LARGE;
     }
 
+    /**
+     * Calculates the number of mature trees lost to a harvest-loss event.
+     *
+     * @param state current game state
+     * @return number of apples that should not be harvested this round
+     */
     public int calculateHarvestLoss(GameState state) {
         if (!state.getRoundEventImpact().hasHarvestLoss()) {
             return 0;
