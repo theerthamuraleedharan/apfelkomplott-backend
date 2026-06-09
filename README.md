@@ -112,3 +112,29 @@ Important application settings are defined in `src/main/resources/application.pr
 
 - Application name: `apfelkomplott`
 - Server port: `8081`
+
+
+## Deployment (Hochschule Fulda VM)
+
+The backend is deployed on an Ubuntu 26.04 LTS virtual machine provided by Hochschule Fulda.
+
+### Production Environment
+
+- Ubuntu 26.04 LTS
+- Java 17
+- Nginx reverse proxy
+- Spring Boot backend running as a systemd service
+- Frontend served separately by Nginx
+
+### Build
+
+```bash
+./mvnw clean package
+
+
+```md
+## Deployment Notes
+
+The backend listens on port 8081 by default. In production, external access is provided through Nginx, which proxies requests to the Spring Boot application.
+
+Card images are served from the `/cards` endpoint via Spring Boot static resources.
