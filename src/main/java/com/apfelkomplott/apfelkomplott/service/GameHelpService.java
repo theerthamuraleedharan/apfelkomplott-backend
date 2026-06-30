@@ -17,7 +17,7 @@ public class GameHelpService {
         guide.setOverview("You manage an apple plantation over 15 rounds. Each round brings events, transport, selling, harvesting, investments that shape your farm.");
         guide.setWinCondition("Win by reaching the end of round 15 without Economy, Environment, or Health dropping to -3. Lose immediately if any of the three scores falls to -3.");
         guide.setSetupSteps(List.of(
-                "An initial investment of 50 Coins is provided at the start of the game.",
+                "An initial investment of 60 Coins is provided at the start of the game.",
                 "Choose a farming mode to start a new game(Conventionalo or Organic).",
                 "The game starts with an empty plantation in round 1 and lasts up to 15 rounds. Players grow the plantation by drawing event cards and buying seeds, crates, and production cards."
         ));

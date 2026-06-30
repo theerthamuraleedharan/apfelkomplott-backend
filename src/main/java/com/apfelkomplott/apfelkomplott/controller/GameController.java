@@ -60,15 +60,19 @@ public class GameController {
      */
     @PostMapping("/start")
     public GameState start(@RequestParam FarmingMode mode) {
-        // Create a fresh game state with the selected farming mode before persisting it.
-        GameState s = new GameState();
-        s.setFarmingMode(mode);
+        return gameStateService.createNewGame(buildNewGame(mode));
+    }
 
-        // Prepare the production deck and initial market for the new game.
-        productionCardService.initDeckAndMarket(s);
-        eventService.initDeck(s);
-
-        return gameStateService.createNewGame(s);
+    /**
+     * Starts a new independent game session and returns the generated game id in
+     * the response body.
+     *
+     * @param mode initial farming mode chosen by the player
+     * @return initialized game state with a unique game id
+     */
+    @PostMapping("/sessions/start")
+    public GameState startSession(@RequestParam FarmingMode mode) {
+        return gameStateService.createNewGameWithGeneratedId(buildNewGame(mode));
     }
 
 
@@ -83,6 +87,11 @@ public class GameController {
         return requireState();
     }
 
+    @GetMapping("/{gameId}/state")
+    public GameState getState(@PathVariable String gameId) {
+        return requireState(gameId);
+    }
+
     @GetMapping("/help")
     public GameGuideDto getGuide() {
         return gameHelpService.buildGuide();
@@ -93,6 +102,11 @@ public class GameController {
         return gameHelpService.buildCurrentPhaseHelp(gameStateService.getState());
     }
 
+    @GetMapping("/{gameId}/help/current-phase")
+    public PhaseHelpDto getCurrentPhaseHelp(@PathVariable String gameId) {
+        return gameHelpService.buildCurrentPhaseHelp(requireState(gameId));
+    }
+
     /**
      * Advances the game by one phase through the round engine and stores the
      * updated state.
@@ -101,7 +115,6 @@ public class GameController {
      */
     @PostMapping("/next-phase")
     public GameState nextPhase() {
-
         GameState state = gameStateService.getState();
 
         // If there is no active game or the game already ended, do not advance anything.
@@ -114,9 +127,27 @@ public class GameController {
         return gameStateService.updateState(state);
     }
 
+    @PostMapping("/{gameId}/next-phase")
+    public GameState nextPhase(@PathVariable String gameId) {
+        GameState state = gameStateService.getState(gameId);
+
+        if (state == null || state.isGameOver()) {
+            return state;
+        }
+
+        roundEngine.runNextPhase(state);
+        return gameStateService.updateState(gameId, state);
+    }
+
     @GetMapping("/event/options")
     public List<HiddenEventCardDto> getEventOptions() {
         GameState state = requireState();
+        return eventService.getHiddenOptions(state);
+    }
+
+    @GetMapping("/{gameId}/event/options")
+    public List<HiddenEventCardDto> getEventOptions(@PathVariable String gameId) {
+        GameState state = requireState(gameId);
         return eventService.getHiddenOptions(state);
     }
 
@@ -134,6 +165,15 @@ public class GameController {
         return gameStateService.updateState(state);
     }
 
+    @PostMapping("/{gameId}/event/select")
+    public GameState selectEvent(
+            @PathVariable String gameId,
+            @Valid @RequestBody EventSelectionRequest request) {
+        GameState state = requireState(gameId);
+        eventService.selectEvent(state, request.getOptionIndex());
+        return gameStateService.updateState(gameId, state);
+    }
+
 
     // ===============================
     // INVESTMENT
@@ -148,7 +188,6 @@ public class GameController {
      */
     @PostMapping("/invest")
     public GameState invest(@Valid @RequestBody InvestmentActionRequest request) {
-
         GameState state = requireState();
 
         if (state.isGameOver()) {
@@ -158,6 +197,20 @@ public class GameController {
         // Apply the chosen investment action to the active game.
         investmentService.invest(state, request.getInvestmentType());
         return gameStateService.updateState(state);
+    }
+
+    @PostMapping("/{gameId}/invest")
+    public GameState invest(
+            @PathVariable String gameId,
+            @Valid @RequestBody InvestmentActionRequest request) {
+        GameState state = requireState(gameId);
+
+        if (state.isGameOver()) {
+            return state;
+        }
+
+        investmentService.invest(state, request.getInvestmentType());
+        return gameStateService.updateState(gameId, state);
     }
 
     /**
@@ -174,6 +227,15 @@ public class GameController {
         return gameStateService.updateState(state);
     }
 
+    @PostMapping("/{gameId}/invest/production")
+    public GameState buyProduction(
+            @PathVariable String gameId,
+            @Valid @RequestBody BuyProductionRequest req) {
+        GameState state = requireState(gameId);
+        productionCardService.buyCard(state, req.getCardId());
+        return gameStateService.updateState(gameId, state);
+    }
+
 
     // ===============================
     // MARKET
@@ -185,10 +247,22 @@ public class GameController {
      return productionCardService.getMarketCards(state);
  }
 
+    @GetMapping("/{gameId}/market")
+    public List<ProductionCardDef> market(@PathVariable String gameId) {
+        GameState state = requireState(gameId);
+        return productionCardService.getMarketCards(state);
+    }
+
     @GetMapping("/active-production-cards")
     public List<ProductionCardDef> activeProductionCards() {
         // Return the long-term production cards that are currently active in the game.
         GameState state = requireState();
+        return productionCardService.getActiveProductionCards(state);
+    }
+
+    @GetMapping("/{gameId}/active-production-cards")
+    public List<ProductionCardDef> activeProductionCards(@PathVariable String gameId) {
+        GameState state = requireState(gameId);
         return productionCardService.getActiveProductionCards(state);
     }
 
@@ -201,16 +275,48 @@ public class GameController {
         return result;
     }
 
+    @PostMapping("/{gameId}/buy-card")
+    public ScoreResult buyCard(@PathVariable String gameId, @RequestParam String cardId) {
+        GameState state = requireState(gameId);
+        ScoreResult result = productionCardService.buyCard(state, cardId);
+        gameStateService.updateState(gameId, state);
+        return result;
+    }
+
     @PostMapping("/card-scoring")
     public ScoreResult applyCardScoring() {
         GameState state = requireState();
         return productionCardService.applyLongTermCardScoring(state);
     }
 
+    @PostMapping("/{gameId}/card-scoring")
+    public ScoreResult applyCardScoring(@PathVariable String gameId) {
+        GameState state = requireState(gameId);
+        return productionCardService.applyLongTermCardScoring(state);
+    }
+
+    private GameState buildNewGame(FarmingMode mode) {
+        GameState state = new GameState();
+        state.setFarmingMode(mode);
+
+        productionCardService.initDeckAndMarket(state);
+        eventService.initDeck(state);
+
+        return state;
+    }
+
     private GameState requireState() {
         GameState state = gameStateService.getState();
         if (state == null) {
             throw new IllegalStateException("Game not started");
+        }
+        return state;
+    }
+
+    private GameState requireState(String gameId) {
+        GameState state = gameStateService.getState(gameId);
+        if (state == null) {
+            throw new IllegalStateException("Game not started: " + gameId);
         }
         return state;
     }

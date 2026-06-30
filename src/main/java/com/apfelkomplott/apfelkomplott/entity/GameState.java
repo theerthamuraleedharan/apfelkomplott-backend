@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class GameState {
 
+    private String gameId;
     private int currentRound;
     private GamePhase currentPhase;
     private int money;
@@ -56,6 +57,14 @@ public class GameState {
 
         this.gameOver = false;
         this.gameResult = GameResult.IN_PROGRESS;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     public int getCurrentRound() {

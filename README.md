@@ -62,9 +62,6 @@ Base path:
 - `POST /game/start?mode=...`  
   Starts a new game with a selected farming mode.
 
-- `POST /game/start-demo`  
-  Starts a demo game state.
-
 - `GET /game/state`  
   Returns the current game state.
 
