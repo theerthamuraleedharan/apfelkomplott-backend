@@ -43,6 +43,7 @@ class GameIntegrationTests {
     void startGameInitializesStateAndMarket() throws Exception {
         mockMvc.perform(post("/game/start").param("mode", FarmingMode.CONVENTIONAL.name()))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId").value("default"))
                 .andExpect(jsonPath("$.farmingMode").value("CONVENTIONAL"))
                 .andExpect(jsonPath("$.currentRound").value(1))
                 .andExpect(jsonPath("$.currentPhase").value("MOVE_MARKER"))
@@ -55,6 +56,37 @@ class GameIntegrationTests {
         mockMvc.perform(get("/game/state"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.gameResult").value("IN_PROGRESS"));
+    }
+
+    @Test
+    void startSessionCreatesGameWithGeneratedId() throws Exception {
+        mockMvc.perform(post("/game/sessions/start").param("mode", FarmingMode.ORGANIC.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId").isNotEmpty())
+                .andExpect(jsonPath("$.farmingMode").value("ORGANIC"))
+                .andExpect(jsonPath("$.currentPhase").value("MOVE_MARKER"));
+    }
+
+    @Test
+    void gameIdEndpointsKeepPlayersSeparate() throws Exception {
+        GameState firstPlayer = new GameState();
+        firstPlayer.setFarmingMode(FarmingMode.CONVENTIONAL);
+        gameStateService.createNewGame("player-one", firstPlayer);
+
+        GameState secondPlayer = new GameState();
+        secondPlayer.setFarmingMode(FarmingMode.ORGANIC);
+        gameStateService.createNewGame("player-two", secondPlayer);
+
+        mockMvc.perform(post("/game/player-one/next-phase"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId").value("player-one"))
+                .andExpect(jsonPath("$.currentPhase").value("DRAW_EVENT"));
+
+        mockMvc.perform(get("/game/player-two/state"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId").value("player-two"))
+                .andExpect(jsonPath("$.farmingMode").value("ORGANIC"))
+                .andExpect(jsonPath("$.currentPhase").value("MOVE_MARKER"));
     }
 
     @Test
