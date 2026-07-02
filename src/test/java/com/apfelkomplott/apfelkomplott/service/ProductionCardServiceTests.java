@@ -57,7 +57,12 @@ class ProductionCardServiceTests {
         assertEquals(-1, state.getScoreTrack().getEnvironment());
         assertEquals(-1, state.getScoreTrack().getHealth());
         assertNotNull(result);
-        assertEquals(0, result.getEconomyChange());
+        assertEquals(2, result.getEconomyChange());
+        assertEquals(-1, result.getEnvironmentChange());
+        assertEquals(-1, result.getHealthChange());
+        assertTrue(result.getReasons().contains("+2 Economy (Faster Growth - Year 1)"));
+        assertTrue(result.getReasons().contains("-1 Environment (Faster Growth - Year 1)"));
+        assertTrue(result.getReasons().contains("-1 Health (Faster Growth - Year 1)"));
     }
 
     @Test

@@ -1,0 +1,10 @@
+com.apfelkomplott.apfelkomplott
+com.apfelkomplott.apfelkomplott.cards
+com.apfelkomplott.apfelkomplott.config
+com.apfelkomplott.apfelkomplott.controller
+com.apfelkomplott.apfelkomplott.controller.dto
+com.apfelkomplott.apfelkomplott.engine
+com.apfelkomplott.apfelkomplott.entity
+com.apfelkomplott.apfelkomplott.Enum
+com.apfelkomplott.apfelkomplott.repository
+com.apfelkomplott.apfelkomplott.service

@@ -56,8 +56,8 @@ public class ProductionCardService {
    *
    * @param state current game state
    * @param cardId identifier of a card currently visible in the market
-   * @return score result for the purchase; short-term effects are applied
-   *         silently in the current implementation
+   * @return score changes applied by the purchase; long-term cards return zero
+   *         changes because their effects are evaluated during card scoring
    * @throws IllegalStateException if the card is unavailable, prerequisites are
    *                               missing, or the player cannot afford it
    */
@@ -114,9 +114,10 @@ public class ProductionCardService {
             state.setFarmingMode(FarmingMode.ORGANIC);
         }
     } else {
-        // Short-term cards still apply immediately, but buying them should not
-        // open a scoring popup. Apply the score change silently.
-        applyEffectsForYear(state, card, 1, plantationSizeAtPurchase, null);
+        // Short-term cards apply immediately. Include those same changes in the
+        // response so clients can update all score displays without guessing or
+        // recalculating the card effects.
+        applyEffectsForYear(state, card, 1, plantationSizeAtPurchase, result);
 
         state.getProductionDiscardPile().add(cardId);
         state.getShortTermUsedThisRound().add(cardId);
