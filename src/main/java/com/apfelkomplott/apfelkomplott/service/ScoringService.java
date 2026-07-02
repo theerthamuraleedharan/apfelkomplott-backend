@@ -17,11 +17,6 @@ public class ScoringService {
      * @return score changes and explanation strings for the UI
      */
     public ScoreResult applyIntermediateScoring(GameState state) {
-
-        if (state.getCurrentRound() < 3) {
-            return new ScoreResult(0, 0, 0);
-        }
-
         Plantation plantation = state.getPlantation();
         ScoreTrack score = state.getScoreTrack();
 
@@ -35,6 +30,33 @@ public class ScoringService {
         long wasted = plantation.getApples().stream()
                 .filter(a -> a.getLocation() == AppleLocation.WASTED)
                 .count();
+
+        long applesProduced = plantation.getApples().stream()
+                .filter(a -> a.getHarvestedRound() == state.getCurrentRound()
+                        && (a.getLocation() == AppleLocation.IN_TRANSPORT
+                        || a.getLocation() == AppleLocation.WASTED))
+                .count();
+        long producedApplesInTransport = plantation.getApples().stream()
+                .filter(a -> a.getHarvestedRound() == state.getCurrentRound()
+                        && a.getLocation() == AppleLocation.IN_TRANSPORT)
+                .count();
+        long currentlyFreeTransportSpaces = plantation.getCrates().stream()
+                .mapToLong(crate -> {
+                    long occupied = plantation.getApples().stream()
+                            .filter(a -> a.getLocation() == AppleLocation.IN_TRANSPORT
+                                    && crate.getId().equals(a.getContainerId()))
+                            .count();
+                    return Math.max(0, crate.getCapacity() - occupied);
+                })
+                .sum();
+        long transportCapacityAtHarvest =
+                currentlyFreeTransportSpaces + producedApplesInTransport;
+
+        result.setWastedApples(Math.toIntExact(wasted));
+        result.setApplesProduced(Math.toIntExact(applesProduced));
+        result.setTransportCapacity(Math.toIntExact(transportCapacityAtHarvest));
+        result.setWasteReason(buildWasteReason(
+                wasted, applesProduced, transportCapacityAtHarvest));
 
         int wastePenalty = (int) (wasted / 3);
         if (wastePenalty > 0) {
@@ -114,6 +136,22 @@ public class ScoringService {
         return result;
 
 
+    }
+
+    private String buildWasteReason(
+            long wasted, long applesProduced, long transportCapacity) {
+        if (applesProduced == 0) {
+            return "No apples were produced this round.";
+        }
+        if (wasted == 0) {
+            return "No apples were wasted because the available transport capacity was sufficient.";
+        }
+        if (transportCapacity == 0) {
+            return wasted + " apples were wasted because no transport capacity was available.";
+        }
+        return wasted + " apples were wasted because " + applesProduced
+                + " apples were produced, but only " + transportCapacity
+                + " transport spaces were available.";
     }
 
 }

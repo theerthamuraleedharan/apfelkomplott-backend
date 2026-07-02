@@ -17,6 +17,3 @@ The generated HTML documentation is written to:
 target/reports/apidocs/index.html
 ```
 
-For future frontend JavaScript or TypeScript code, JSDoc can be used in the
-same spirit. Doxygen is also possible, but Javadoc is the standard tool for the
-Java backend in this project.

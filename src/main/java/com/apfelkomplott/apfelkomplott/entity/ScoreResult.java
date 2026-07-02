@@ -8,6 +8,10 @@ public class ScoreResult {
     private int economyChange;
     private int environmentChange;
     private int healthChange;
+    private int wastedApples;
+    private int applesProduced;
+    private int transportCapacity;
+    private String wasteReason;
 
     private List<String> reasons = new ArrayList<>();
 
@@ -28,6 +32,10 @@ public class ScoreResult {
     public int getEconomyChange() { return economyChange; }
     public int getEnvironmentChange() { return environmentChange; }
     public int getHealthChange() { return healthChange; }
+    public int getWastedApples() { return wastedApples; }
+    public int getApplesProduced() { return applesProduced; }
+    public int getTransportCapacity() { return transportCapacity; }
+    public String getWasteReason() { return wasteReason; }
 
     public void setEconomyChange(int economyChange) {
         this.economyChange = economyChange;
@@ -39,6 +47,22 @@ public class ScoreResult {
 
     public void setHealthChange(int healthChange) {
         this.healthChange = healthChange;
+    }
+
+    public void setWastedApples(int wastedApples) {
+        this.wastedApples = wastedApples;
+    }
+
+    public void setApplesProduced(int applesProduced) {
+        this.applesProduced = applesProduced;
+    }
+
+    public void setTransportCapacity(int transportCapacity) {
+        this.transportCapacity = transportCapacity;
+    }
+
+    public void setWasteReason(String wasteReason) {
+        this.wasteReason = wasteReason;
     }
 
     public void setReasons(List<String> reasons) {

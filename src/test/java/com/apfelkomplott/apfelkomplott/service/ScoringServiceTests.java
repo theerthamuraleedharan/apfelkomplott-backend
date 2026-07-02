@@ -20,6 +20,19 @@ class ScoringServiceTests {
     private final ScoringService service = new ScoringService();
 
     @Test
+    void intermediateScoringPenalizesEmptyTransportInEarlyRounds() {
+        GameState state = new GameState();
+        state.setCurrentRound(1);
+        state.getPlantation().getCrates().add(new Crate(UUID.randomUUID(), 3));
+
+        ScoreResult result = service.applyIntermediateScoring(state);
+
+        assertEquals(-1, result.getEconomyChange());
+        assertEquals(-1, state.getScoreTrack().getEconomy());
+        assertTrue(result.getReasons().contains("-1 Economy (Empty transport crate)"));
+    }
+
+    @Test
     void intermediateScoringPenalizesWastedApplesAndRemovesThem() {
         GameState state = new GameState();
         state.setCurrentRound(3);
@@ -30,6 +43,12 @@ class ScoringServiceTests {
         assertEquals(-1, result.getEconomyChange());
         assertEquals(-1, state.getScoreTrack().getEconomy());
         assertTrue(result.getReasons().contains("-1 Economy (Wasted apples)"));
+        assertEquals(3, result.getWastedApples());
+        assertEquals(3, result.getApplesProduced());
+        assertEquals(0, result.getTransportCapacity());
+        assertEquals(
+                "3 apples were wasted because no transport capacity was available.",
+                result.getWasteReason());
         assertTrue(state.getPlantation().getApples().isEmpty());
     }
 
@@ -66,6 +85,31 @@ class ScoringServiceTests {
         assertEquals(1, state.getScoreTrack().getEconomy());
         assertFalse(state.isGameOver());
         assertTrue(result.getReasons().contains("+1 Economy (Perfect balance bonus)"));
+        assertEquals(0, result.getWastedApples());
+        assertEquals(3, result.getApplesProduced());
+        assertEquals(3, result.getTransportCapacity());
+        assertEquals(
+                "No apples were wasted because the available transport capacity was sufficient.",
+                result.getWasteReason());
+    }
+
+    @Test
+    void intermediateScoringExplainsWasteWhenProductionExceedsTransportCapacity() {
+        GameState state = new GameState();
+        state.setCurrentRound(3);
+        Crate crate = new Crate(UUID.randomUUID(), 3);
+        state.getPlantation().getCrates().add(crate);
+        addApples(state, AppleLocation.IN_TRANSPORT, crate.getId(), 3);
+        addApples(state, AppleLocation.WASTED, null, 2);
+
+        ScoreResult result = service.applyIntermediateScoring(state);
+
+        assertEquals(2, result.getWastedApples());
+        assertEquals(5, result.getApplesProduced());
+        assertEquals(3, result.getTransportCapacity());
+        assertEquals(
+                "2 apples were wasted because 5 apples were produced, but only 3 transport spaces were available.",
+                result.getWasteReason());
     }
 
     private void addApples(GameState state, AppleLocation location, UUID containerId, int count) {
@@ -73,6 +117,7 @@ class ScoringServiceTests {
             Apple apple = new Apple();
             apple.setLocation(location);
             apple.setContainerId(containerId);
+            apple.setHarvestedRound(state.getCurrentRound());
             state.getPlantation().getApples().add(apple);
         }
     }
