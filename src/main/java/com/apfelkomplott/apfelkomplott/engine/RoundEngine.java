@@ -121,8 +121,7 @@ public class RoundEngine {
             case INTERMEDIATE_SCORING -> {
 
                 // If scoring not yet calculated
-                if (state.getLastScoreResult() == null
-                        && state.getCurrentRound() >= 3) {
+                if (state.getLastScoreResult() == null) {
 
                     ScoreResult result =
                             scoringService.applyIntermediateScoring(state);

@@ -20,6 +20,19 @@ class ScoringServiceTests {
     private final ScoringService service = new ScoringService();
 
     @Test
+    void intermediateScoringPenalizesEmptyTransportInEarlyRounds() {
+        GameState state = new GameState();
+        state.setCurrentRound(1);
+        state.getPlantation().getCrates().add(new Crate(UUID.randomUUID(), 3));
+
+        ScoreResult result = service.applyIntermediateScoring(state);
+
+        assertEquals(-1, result.getEconomyChange());
+        assertEquals(-1, state.getScoreTrack().getEconomy());
+        assertTrue(result.getReasons().contains("-1 Economy (Empty transport crate)"));
+    }
+
+    @Test
     void intermediateScoringPenalizesWastedApplesAndRemovesThem() {
         GameState state = new GameState();
         state.setCurrentRound(3);

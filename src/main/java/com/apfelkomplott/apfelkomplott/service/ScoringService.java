@@ -17,11 +17,6 @@ public class ScoringService {
      * @return score changes and explanation strings for the UI
      */
     public ScoreResult applyIntermediateScoring(GameState state) {
-
-        if (state.getCurrentRound() < 3) {
-            return new ScoreResult(0, 0, 0);
-        }
-
         Plantation plantation = state.getPlantation();
         ScoreTrack score = state.getScoreTrack();
 

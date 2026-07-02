@@ -3,6 +3,7 @@ package com.apfelkomplott.apfelkomplott.engine;
 import com.apfelkomplott.apfelkomplott.Enum.FarmingMode;
 import com.apfelkomplott.apfelkomplott.cards.ActiveProductionCard;
 import com.apfelkomplott.apfelkomplott.controller.dto.SellResult;
+import com.apfelkomplott.apfelkomplott.entity.Crate;
 import com.apfelkomplott.apfelkomplott.entity.GamePhase;
 import com.apfelkomplott.apfelkomplott.entity.GameResult;
 import com.apfelkomplott.apfelkomplott.entity.GameState;
@@ -107,6 +108,22 @@ class RoundEngineTests {
 
         assertEquals(GamePhase.INVEST, state.getCurrentPhase());
         assertNull(state.getLastScoreResult());
+    }
+
+    @Test
+    void intermediateScoringAppliesEmptyCratePenaltyInRoundOne() {
+        GameState state = new GameState();
+        state.setCurrentPhase(GamePhase.INTERMEDIATE_SCORING);
+        state.setCurrentRound(1);
+        state.getPlantation().getCrates().add(new Crate());
+
+        engine.runNextPhase(state);
+
+        assertNotNull(state.getLastScoreResult());
+        assertEquals(-1, state.getLastScoreResult().getEconomyChange());
+        assertEquals(-1, state.getScoreTrack().getEconomy());
+        assertTrue(state.getLastScoreResult().getReasons()
+                .contains("-1 Economy (Empty transport crate)"));
     }
 
     @Test
