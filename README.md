@@ -105,6 +105,21 @@ Base path:
 
 ## Configuration
 
+### JSON request validation
+
+JSON request bodies are validated using Jackson and Jakarta Bean Validation.
+Invalid bodies return HTTP `400` with a JSON `message` field before game actions run.
+This applies to both the legacy `/game/...` and `/game/{gameId}/...` action endpoints.
+
+- Production purchases require a nonblank `cardId` string.
+- Event selections require a nonnegative integer `optionIndex`; fractional values are rejected.
+- Investments require an `investmentType` name: `BUY_SEEDLING`, `BUY_PRE_GROWN_TREE`,
+  `BUY_CRATE`, or `BUY_SALES_STAND`. Numeric enum values are rejected.
+- Unknown properties, malformed JSON, and extra content after the JSON body are rejected.
+
+These checks use the existing validation dependency; no JSON Schema library is required.
+Jackson settings below apply to the application's shared mapper, including card data loading.
+
 Important application settings are defined in `src/main/resources/application.properties`.
 
 - Application name: `apfelkomplott`

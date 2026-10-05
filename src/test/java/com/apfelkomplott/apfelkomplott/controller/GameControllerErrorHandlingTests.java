@@ -10,6 +10,8 @@ import com.apfelkomplott.apfelkomplott.service.GameStateService;
 import com.apfelkomplott.apfelkomplott.service.InvestmentService;
 import com.apfelkomplott.apfelkomplott.service.ProductionCardService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -96,6 +99,31 @@ class GameControllerErrorHandlingTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("cardId is required."));
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "/event/select | {\"optionIndex\":0,\"unexpected\":true}",
+            "/event/select | {\"optionIndex\":0.5}",
+            "/event/select | {\"optionIndex\":0} {}",
+            "/event/select | {\"optionIndex\":",
+            "/event/select | {}",
+            "/event/select | {\"optionIndex\":null}",
+            "/event/select | {\"optionIndex\":-1}",
+            "/invest | {\"investmentType\":0}",
+            "/invest | {\"investmentType\":\"INVALID\"}",
+            "/invest/production | {\"cardId\":null}"
+    })
+    void invalidJsonIsRejectedBeforeGameActions(String endpoint, String body) throws Exception {
+        for (String prefix : new String[]{"/game", "/game/test-game"}) {
+            mockMvc.perform(post(prefix + endpoint)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.message").isNotEmpty());
+        }
+        verifyNoInteractions(gameStateService, investmentService, productionCardService, eventService);
     }
 
     private GameState stateInPhase(GamePhase phase) {
